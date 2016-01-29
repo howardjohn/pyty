@@ -1,40 +1,84 @@
 import win32gui as wg
 import win32api as wa
+import win32process as wp
+import win32con as wc
+import ctypes
+import ctypes.wintypes
 
 
 def getScreenResolution():
     return wa.GetSystemMetrics(0), wa.GetSystemMetrics(1)
 
 
-def blacklist(hwnd):
-    '''Returns if a hwnd is one of the windows 10 hidden windows.
-       Currently uses window title, but this is not ideal'''
-    black = ("Windows Shell Experience Host", "Program Manager")
-    # hwndTry = GetAncestor(hwnd, GA_ROOTOWNER);
-    # while(hwndTry != hwndWalk) 
-    # {
-    #     hwndWalk = hwndTry;
-    #     hwndTry = GetLastActivePopup(hwndWalk);
-    #     if(IsWindowVisible(hwndTry)) 
-    #         break;
-    # }
-    # if(hwndWalk != hwnd)
+def get_app_name(hwnd):
+    """Get applicatin filename given hwnd."""
+    return wa.GetModuleFileNameW(hwnd)
 
-    hwndWalk = None
-    hwndTry = wg.GetWindow(hwnd, 3)
-    print(hwnd, hwndTry)
+
+def isRealWindow(hwnd):
+    '''Returns if a hwnd is one of the windows 10 hidden windows.
+    http://stackoverflow.com/a/7292674/238472 
+    and https://github.com/Answeror/lit/blob/master/windows.py for details.'''
+
+    class TITLEBARINFO(ctypes.Structure):
+        _fields_ = [
+            ("cbSize", ctypes.wintypes.DWORD),
+            ("rcTitleBar", ctypes.wintypes.RECT),
+            ("rgstate", ctypes.wintypes.DWORD * 6)
+        ]
+
+    class WINDOWINFO(ctypes.Structure):
+        _fields_ = [
+            ("cbSize", ctypes.wintypes.DWORD),
+            ("rcWindow", ctypes.wintypes.RECT),
+            ("rcClient", ctypes.wintypes.RECT),
+            ("dwStyle", ctypes.wintypes.DWORD),
+            ("dwExStyle", ctypes.wintypes.DWORD),
+            ("dwWindowStatus", ctypes.wintypes.DWORD),
+            ("cxWindowBorders", ctypes.wintypes.UINT),
+            ("cyWindowBorders", ctypes.wintypes.UINT),
+            ("atomWindowType", ctypes.wintypes.ATOM),
+            ("wCreatorVersion", ctypes.wintypes.DWORD),
+        ]
+
+    if not wg.IsWindowVisible(hwnd) or not wg.IsWindow(hwnd):
+        return False
+    hwndWalk = wc.NULL
+    hwndTry = ctypes.windll.user32.GetAncestor(hwnd, wc.GA_ROOTOWNER)
     while hwndTry != hwndWalk:
         hwndWalk = hwndTry
-        # hwndTry = 
-    print(wg.GetLastActivePopup(hwnd))
-    return wg.GetWindowText(hwnd) in black
+        hwndTry = ctypes.windll.user32.GetLastActivePopup(hwndWalk)
+        if wg.IsWindowVisible(hwndTry):
+            break
+
+    if hwndWalk != hwnd:
+        return False
+    # the following removes some task tray programs and "Program Manager"
+    ti = TITLEBARINFO()
+    ti.cbSize = ctypes.sizeof(ti)
+    ctypes.windll.user32.GetTitleBarInfo(hwnd, ctypes.byref(ti))
+    if ti.rgstate[0] & wc.STATE_SYSTEM_INVISIBLE:
+        return False
+
+    # Tool windows should not be displayed either
+    if wg.GetWindowLong(hwnd, wc.GWL_EXSTYLE) & wc.WS_EX_TOOLWINDOW:
+        return False
+
+    pwi = WINDOWINFO()
+    ctypes.windll.user32.GetWindowInfo(hwnd, ctypes.byref(pwi))
+    if pwi.dwExStyle & wc.WS_EX_NOACTIVATE:
+        return False
+
+    if getText(hwnd) == "":
+        print("WARNING: NO TEXT WINDOW: %s"%hwnd)
+        
+    return True
+
 
 def getAllWindows():
     def call(hwnd, param):
-        if wg.IsWindowVisible(hwnd) and len(wg.GetWindowText(hwnd)) > 0 and \
-           not wg.GetParent(hwnd): # and not blacklist(hwnd)
-            print(blacklist(hwnd))
-            # print(hwnd, wg.GetWindowText(hwnd), "a")
+        if isRealWindow(hwnd):
+            # print(hwnd, wg.GetWindowText(hwnd))
             # print(wg.GetWindowPlacement(hwnd))
             param.append(hwnd)
 
@@ -42,9 +86,15 @@ def getAllWindows():
     wg.EnumWindows(call, winds)
     return winds
 
+
+def getText(hwnd):
+    return ''.join(char for char in wg.GetWindowText(hwnd) if ord(char) <= 126)
+
+
 def moveWindow(hwnd, loc, size, gap=0):
-    wg.MoveWindow(hwnd, loc[0]-8, loc[1], size[0]+16, size[1]+8, True)
+    wg.MoveWindow(hwnd, loc[0] - 8, loc[1], size[0] + 16, size[1] + 8, True)
 
 if __name__ == "__main__":
     for a in getAllWindows():
-        print(wg.GetWindowPlacement(a), wg.GetWindowText(a)[:40])
+        pass
+        # print(getText(a))
