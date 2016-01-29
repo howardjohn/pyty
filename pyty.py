@@ -5,19 +5,18 @@ import py32
 w, h = py32.getScreenResolution()
 
 winds = py32.getAllWindows()
-
-n = 5
+print(len(winds))
+1/0
+n = 0
 for wind in winds:
-   if n == 0:
-      wg.MoveWindow(wind, 0, 7, 963, 535, True)
-      # wg.MoveWindow(wind, -2, 6, 955, 531, True)
-      # wg.MoveWindow(wind, -2, 6, 955, 531, True)
-   elif n == 1:
-      wg.MoveWindow(wind, 0, 543, 963, 535, True)
-   elif n == 2:
-      wg.MoveWindow(wind, 954, 8, 963, 535, True)
-   elif n == 3:
-      wg.MoveWindow(wind, 954, 543, 963, 535, True)
-   else:
-      break
-   n+=1
+    if n == 0:
+        py32.moveWindow(wind, (0,0), (1920//2, 1080//2), True)
+    elif n == 1:
+        py32.moveWindow(wind, (1920//2,0), (1920//2, 1080//2), True)
+    elif n == 2:
+        py32.moveWindow(wind, (0, 1080//2), (1920//2, 1080//2), True)
+    elif n == 3:
+        py32.moveWindow(wind, (1920//2, 1080//2), (1920//2, 1080//2), True)
+    else:
+        break
+    n += 1
