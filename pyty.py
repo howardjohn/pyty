@@ -11,8 +11,8 @@ winds = py32.getAllWindows()
 main = Node(hwnd=winds[0], w=w, h=h)
 # main = Node(winds[0], main)
 for wind in winds[1:]:
-    Node(wind, main)
+    main.addChild(Node(wind, main))
 
-node = main
-print(node.w, node.h)
-print(node.children[0].w, node.children[0].h)
+main.updateDims()
+print(main.w, main.h)
+print(main.children[0].w, main.children[0].h)

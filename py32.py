@@ -71,15 +71,13 @@ def isRealWindow(hwnd):
 
     if getText(hwnd) == "":
         print("WARNING: NO TEXT WINDOW: %s"%hwnd)
-        
+
     return True
 
 
 def getAllWindows():
     def call(hwnd, param):
         if isRealWindow(hwnd):
-            # print(hwnd, wg.GetWindowText(hwnd))
-            # print(wg.GetWindowPlacement(hwnd))
             param.append(hwnd)
 
     winds = []
@@ -89,7 +87,6 @@ def getAllWindows():
 
 def getText(hwnd):
     return ''.join(char for char in wg.GetWindowText(hwnd) if ord(char) <= 126)
-
 
 def moveWindow(hwnd, loc, size, gap=0):
     wg.MoveWindow(hwnd, loc[0] - 8, loc[1], size[0] + 16, size[1] + 8, True)
