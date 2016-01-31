@@ -8,9 +8,12 @@ class Split(Enum):
 
 class Node:
     # TODO: what about when there are two nodes with no parents?
-
+    # Best solution is likely to have 'Root' class (or desktop? makes sense too)
     def __init__(self, hwnd, parent=None, w=None, h=None):
         self.parent = parent
+        if self.parent is not None:
+            self.parent.addChild(self)
+
         self.children = []
         self.hwnd = hwnd
 
@@ -65,7 +68,7 @@ class Node:
         n = 1
         if self.parent is not None:
             n += len(self.parent.children) - 1
-        n += 1 if self.children else 0
+        n *= 2 if self.children else 1
         if split == Split.horz:
             return (w, h // n)
         return (w // n, h)

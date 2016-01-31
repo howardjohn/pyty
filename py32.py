@@ -66,6 +66,12 @@ def isRealWindow(hwnd):
 
     pwi = WINDOWINFO()
     ctypes.windll.user32.GetWindowInfo(hwnd, ctypes.byref(pwi))
+
+    # Backround AND FOREGROUND metro style apps. 
+    # Should be fixed for background only
+    if pwi.dwStyle == 2496593920 or getText=='Netflix':
+        return False
+
     if pwi.dwExStyle & wc.WS_EX_NOACTIVATE:
         return False
 
