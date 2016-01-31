@@ -92,6 +92,9 @@ def getText(hwnd):
 def moveWindow(hwnd, loc, size, gap=0):
     wg.MoveWindow(hwnd, loc[0] - 8, loc[1], size[0] + 16, size[1] + 8, True)
 
+def restore(hwnd):
+    wg.ShowWindow(hwnd, wc.SW_RESTORE)
+
 if __name__ == "__main__":
     for a in getAllWindows():
         pass

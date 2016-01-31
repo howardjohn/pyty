@@ -19,6 +19,7 @@ main.updateAll()
 # print(main.children[1].x, main.children[1].y)
 
 def updateLocation(node):
+    py32.restore(node.hwnd)
     py32.moveWindow(node.hwnd, (node.x, node.y), (node.w, node.h))
     for child in node.children:
         updateLocation(child)
