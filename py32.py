@@ -71,6 +71,7 @@ def isRealWindow(hwnd):
 
     if getText(hwnd) == "":
         print("WARNING: NO TEXT WINDOW: %s"%hwnd)
+        return False
 
     return True
 

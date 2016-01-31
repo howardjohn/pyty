@@ -13,6 +13,14 @@ main = Node(hwnd=winds[0], w=w, h=h)
 for wind in winds[1:]:
     main.addChild(Node(wind, main))
 
-main.updateDims()
-print(main.w, main.h)
-print(main.children[0].w, main.children[0].h)
+main.updateAll()
+# print(main.w, main.x, main.h, main.y, main.split)
+# print(main.children[0].x, main.children[0].y)
+# print(main.children[1].x, main.children[1].y)
+
+def updateLocation(node):
+    py32.moveWindow(node.hwnd, (node.x, node.y), (node.w, node.h))
+    for child in node.children:
+        updateLocation(child)
+
+updateLocation(main)
