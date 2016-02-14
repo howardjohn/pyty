@@ -28,4 +28,4 @@ def updateLocation(node):
     for child in node.children:
         updateLocation(child)
 
-updateLocation(desk.root)
+updateLocation(desk.roots[0])
