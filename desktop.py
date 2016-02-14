@@ -17,7 +17,9 @@ class Desktop:
             hwnds: all hwnds detected.
         """
         # TODO: roots not root
-        self.roots = [Node(hwnd=hwnds[0], w=w, h=h)]
+        self.roots = [Node(hwnd=hwnds[0], parent=self, w=w, h=h)]
+        self.w = w
+        self.h = h
         for hwnd in hwnds[1:]:
             Node(hwnd, self.roots[0])
         for root in self.roots:

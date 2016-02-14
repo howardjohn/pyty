@@ -2,7 +2,7 @@
 """
 from enum import Enum
 
-GAP = 20
+
 
 
 class Split(Enum):
@@ -32,9 +32,9 @@ class Node:
         Calculates the type of split.
         """
         self.parent = parent
-        if self.parent is not None:
-            self.parent.addChild(self)
 
+        if type(self.parent) is Node:
+            self.parent.addChild(self)
         self.children = []
         self.hwnd = hwnd
 
@@ -53,7 +53,7 @@ class Node:
         """Updates coordinates by calling the getCoords function.
         Then calls this function on all children.
         """
-        if self.parent is None:
+        if type(self.parent) is not Node:
             self.x = 0
             self.y = 0
         else:
@@ -101,7 +101,7 @@ class Node:
         """Returns (w, h) value based on number of siblings and children.
         """
         n = 1
-        if self.parent is not None:
+        if type(self.parent) is Node:
             n += len(self.parent.children) - 1
         n *= 2 if self.children else 1
         if split == Split.horz:
@@ -117,9 +117,9 @@ class Node:
     def getLevel(self):
         """Returns the depth of the node (how many parents above it).
         """
-        level = 0
+        level = 1
         node = self
-        while node.parent:
+        while type(node) is Node:
             level += 1
             node = node.parent
         return level
@@ -127,12 +127,37 @@ class Node:
     def getWindowDims(self, gap=0):
         """Returns the window dimensions, taking gap into account.
         """
-        return (self.w - gap * 2, self.h - gap * 2)
+        rootParent = self
+        while type(rootParent) is Node:
+            rootParent = rootParent.parent
+
+        width = self.w - gap
+        width -= gap // 2 * (self.x == 0)
+        width -= gap // 2 * (self.x + self.w == rootParent.w)
+
+        height = self.h - gap
+        height -= gap // 2 * (self.y == 0)
+        height -= gap // 2 * (self.y + self.h == rootParent.h)
+
+        print(width, height)
+        return (width, height)
 
     def getWindowLoc(self, gap=0):
         """Returns the window location, taking gap into account.
         """
-        return (self.x + gap, self.y + gap)
+        rootParent = self
+        while type(rootParent) is Node:
+            rootParent = rootParent.parent
+
+        x = self.x + gap
+        y = self.y + gap
+
+        if self.x != 0:
+            x -= gap // 2
+        if self.y != 0:
+            y -= gap // 2
+        print(self.x, self.y, x, y)
+        return (x, y)
 
     def __str__(self):
         """Returns a string representation of the Node.

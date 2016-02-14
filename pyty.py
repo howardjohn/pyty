@@ -1,6 +1,6 @@
 import py32
 from desktop import Desktop
-
+GAP = 6
 w, h = py32.getScreenResolution()
 
 winds = py32.getAllWindows()
@@ -22,7 +22,7 @@ desk = Desktop(w, h, winds)
 
 def updateLocation(node):
     py32.restore(node.hwnd)
-    py32.moveWindow(node.hwnd, node.getWindowLoc(10), node.getWindowDims(10))
+    py32.moveWindow(node.hwnd, node.getWindowLoc(GAP), node.getWindowDims(GAP))
     for child in node.children:
         updateLocation(child)
 
