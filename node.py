@@ -1,5 +1,7 @@
 from enum import Enum
 
+GAP = 20
+
 
 class Split(Enum):
     vert = 0
@@ -8,7 +10,9 @@ class Split(Enum):
 
 class Node:
     # TODO: what about when there are two nodes with no parents?
-    # Best solution is likely to have 'Root' class (or desktop? makes sense too)
+    # Best solution is likely to have 'Root' class (or desktop? makes sense
+    # too)
+
     def __init__(self, hwnd, parent=None, w=None, h=None):
         self.parent = parent
         if self.parent is not None:
@@ -84,6 +88,12 @@ class Node:
             level += 1
             node = node.parent
         return level
+
+    def getWindowDims(self, gap=0):
+        return (self.w - gap * 2, self.h - gap * 2)
+
+    def getWindowLoc(self, gap=0):
+        return (self.x + gap, self.y + gap)
 
     def __str__(self):
         return '*Node* level:{0}, childs:{1}'.format(self.level, len(self.children))

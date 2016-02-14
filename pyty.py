@@ -11,6 +11,7 @@ print(len(winds), [py32.getText(win) for win in winds])
 
 
 desk = Desktop(w, h, winds)
+
 # main = Node(hwnd=winds[0], w=w, h=h)
 # # main = Node(winds[0], main)
 # for wind in winds[1:]:
@@ -23,7 +24,7 @@ desk = Desktop(w, h, winds)
 
 def updateLocation(node):
     py32.restore(node.hwnd)
-    py32.moveWindow(node.hwnd, (node.x, node.y), (node.w, node.h))
+    py32.moveWindow(node.hwnd, node.getWindowLoc(10), node.getWindowDims(10))
     for child in node.children:
         updateLocation(child)
 
