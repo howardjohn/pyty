@@ -1,26 +1,25 @@
-import win32gui as wg
-import win32api as wa
-import win32process as wp
-import win32con as wc
+"""This module abstracts the win32 api logic into easily usable functions
+relevent to the program."""
 import ctypes
 import ctypes.wintypes
+import win32gui as wg
+import win32api as wa
+import win32con as wc
 
 
 def getScreenResolution():
+    """Returns the screen resolution in pixels (width, height)."""
     return wa.GetSystemMetrics(0), wa.GetSystemMetrics(1)
 
 
-def get_app_name(hwnd):
-    """Get applicatin filename given hwnd."""
-    return wa.GetModuleFileNameW(hwnd)
-
-
 def isRealWindow(hwnd):
-    '''Returns if a hwnd is one of the windows 10 hidden windows.
-    http://stackoverflow.com/a/7292674/238472 
-    and https://github.com/Answeror/lit/blob/master/windows.py for details.'''
+    """Returns True if the hwnd is a visible window.
+    http://stackoverflow.com/a/7292674/238472
+    and https://github.com/Answeror/lit/blob/master/windows.py for details.
+    """
 
     class TITLEBARINFO(ctypes.Structure):
+        """ctype Structure for TITLEBARINFO"""
         _fields_ = [
             ("cbSize", ctypes.wintypes.DWORD),
             ("rcTitleBar", ctypes.wintypes.RECT),
@@ -28,6 +27,7 @@ def isRealWindow(hwnd):
         ]
 
     class WINDOWINFO(ctypes.Structure):
+        """ctype Structure for WINDOWINFO"""
         _fields_ = [
             ("cbSize", ctypes.wintypes.DWORD),
             ("rcWindow", ctypes.wintypes.RECT),
@@ -43,6 +43,7 @@ def isRealWindow(hwnd):
 
     if not wg.IsWindowVisible(hwnd) or not wg.IsWindow(hwnd):
         return False
+
     hwndWalk = wc.NULL
     hwndTry = ctypes.windll.user32.GetAncestor(hwnd, wc.GA_ROOTOWNER)
     while hwndTry != hwndWalk:
@@ -53,7 +54,8 @@ def isRealWindow(hwnd):
 
     if hwndWalk != hwnd:
         return False
-    # the following removes some task tray programs and "Program Manager"
+
+    # Removes some task tray programs and "Program Manager"
     ti = TITLEBARINFO()
     ti.cbSize = ctypes.sizeof(ti)
     ctypes.windll.user32.GetTitleBarInfo(hwnd, ctypes.byref(ti))
@@ -67,23 +69,27 @@ def isRealWindow(hwnd):
     pwi = WINDOWINFO()
     ctypes.windll.user32.GetWindowInfo(hwnd, ctypes.byref(pwi))
 
-    # Backround AND FOREGROUND metro style apps. 
+    # Backround AND FOREGROUND metro style apps.
     # Should be fixed for background only
-    if pwi.dwStyle == 2496593920 or getText=='Netflix':
+    # TODO I don't hate netflix
+    if pwi.dwStyle == 2496593920 or getText == 'Netflix':
         return False
 
     if pwi.dwExStyle & wc.WS_EX_NOACTIVATE:
         return False
 
     if getText(hwnd) == "":
-        print("WARNING: NO TEXT WINDOW: %s"%hwnd)
+        print("WARNING: NO TEXT WINDOW: %s" % hwnd)
         return False
 
     return True
 
 
 def getAllWindows():
+    """Returns the hwnd of all 'real' windows."""
     def call(hwnd, param):
+        """The callback function for EnumWindows.
+        Appends all hwnds to param list"""
         if isRealWindow(hwnd):
             param.append(hwnd)
 
@@ -93,15 +99,23 @@ def getAllWindows():
 
 
 def getText(hwnd):
+    """Returns the titlebar text of a window.
+    """
     return ''.join(char for char in wg.GetWindowText(hwnd) if ord(char) <= 126)
 
-def moveWindow(hwnd, loc, size, gap=0):
+
+def moveWindow(hwnd, loc, size):
+    """Moves window.
+    The 8 and 16 values are due to windows 10 having an invisible border.
+
+    Args:
+        loc: (x,y) of new location
+        size: (width, height) of new location
+    """
     wg.MoveWindow(hwnd, loc[0] - 8, loc[1], size[0] + 16, size[1] + 8, True)
 
-def restore(hwnd):
-    wg.ShowWindow(hwnd, wc.SW_RESTORE)
 
-if __name__ == "__main__":
-    for a in getAllWindows():
-        pass
-        # print(getText(a))
+def restore(hwnd):
+    """Restores (unmaximizes) the window.
+    """
+    wg.ShowWindow(hwnd, wc.SW_RESTORE)

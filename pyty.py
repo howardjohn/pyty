@@ -1,7 +1,4 @@
-import win32gui as wg
-import win32api as wa
 import py32
-from node import Node
 from desktop import Desktop
 
 w, h = py32.getScreenResolution()
@@ -21,6 +18,7 @@ desk = Desktop(w, h, winds)
 # # print(main.w, main.x, main.h, main.y, main.split)
 # # print(main.children[0].x, main.children[0].y)
 # # print(main.children[1].x, main.children[1].y)
+
 
 def updateLocation(node):
     py32.restore(node.hwnd)

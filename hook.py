@@ -1,4 +1,6 @@
-import pythoncom, pyHook
+import pythoncom
+import pyHook
+
 
 def OnKeyboardEvent(event):
     print('Key:', event.Key)

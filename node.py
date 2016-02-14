@@ -1,19 +1,36 @@
+"""The node class stores all the information about the window it holds.
+"""
 from enum import Enum
 
 GAP = 20
 
 
 class Split(Enum):
+    """Enum containing information of how the window is split:
+    horizontally or vertically.
+    """
     vert = 0
     horz = 1
 
 
 class Node:
-    # TODO: what about when there are two nodes with no parents?
-    # Best solution is likely to have 'Root' class (or desktop? makes sense
-    # too)
+    """Stores all information on a window.
+
+    Attributes:
+        children (list): holds all childen Nodes.
+        hwnd: the window held by this Node.
+        parent (Node): parent Node.
+        split (Split): Direction node is split relative to its siblings.
+        h (int): height
+        w (int): width
+        x (int): x coordinate
+        y (int): y coordinate
+    """
 
     def __init__(self, hwnd, parent=None, w=None, h=None):
+        """Initializes the node. Tells the parent this is a child.
+        Calculates the type of split.
+        """
         self.parent = parent
         if self.parent is not None:
             self.parent.addChild(self)
@@ -21,17 +38,21 @@ class Node:
         self.children = []
         self.hwnd = hwnd
 
-        self.level = self.getLevel()
-        self.split = Split((self.level) % 2)
+        self.split = Split((self.getLevel()) % 2)
         self.w = w
         self.h = h
         self.x = None
         self.y = None
 
     def addChild(self, child):
+        """Appends child to children list.
+        """
         self.children.append(child)
 
     def updateCoords(self):
+        """Updates coordinates by calling the getCoords function.
+        Then calls this function on all children.
+        """
         if self.parent is None:
             self.x = 0
             self.y = 0
@@ -42,6 +63,9 @@ class Node:
             child.updateCoords()
 
     def getCoords(self):
+        """Returns the x, y coordinates by checking parent coordinates,
+        and relative position of siblings based on type of split.
+        """
         # move relative to parent
         if self.parent.split == Split.vert:
             x = self.parent.x + self.parent.w
@@ -52,13 +76,18 @@ class Node:
 
         # move relative to siblings
         if self.split == Split.vert:
-            x += sum([c.w for c in self.parent.children[:self.parent.children.index(self)]])
+            x += sum([c.w for c in
+                      self.parent.children[:self.parent.children.index(self)]])
         else:
-            y += sum([c.h for c in self.parent.children[:self.parent.children.index(self)]])
+            y += sum([c.h for c in
+                      self.parent.children[:self.parent.children.index(self)]])
 
         return x, y
 
     def updateDims(self):
+        """Updates dimensions by calling the getDims function.
+        Then calls this function on all children.
+        """
         if self.parent is None:
             self.w, self.h = self.getDims(self.w, self.h, self.split)
         else:
@@ -69,6 +98,8 @@ class Node:
             child.updateDims()
 
     def getDims(self, w, h, split=Split.horz):
+        """Returns (w, h) value based on number of siblings and children.
+        """
         n = 1
         if self.parent is not None:
             n += len(self.parent.children) - 1
@@ -78,10 +109,14 @@ class Node:
         return (w // n, h)
 
     def updateAll(self):
+        """Calls both update functions.
+        """
         self.updateDims()
         self.updateCoords()
 
     def getLevel(self):
+        """Returns the depth of the node (how many parents above it).
+        """
         level = 0
         node = self
         while node.parent:
@@ -90,10 +125,17 @@ class Node:
         return level
 
     def getWindowDims(self, gap=0):
+        """Returns the window dimensions, taking gap into account.
+        """
         return (self.w - gap * 2, self.h - gap * 2)
 
     def getWindowLoc(self, gap=0):
+        """Returns the window location, taking gap into account.
+        """
         return (self.x + gap, self.y + gap)
 
     def __str__(self):
-        return '*Node* level:{0}, childs:{1}'.format(self.level, len(self.children))
+        """Returns a string representation of the Node.
+        """
+        return '*Node* level:{0}, childs:{1}'.format(self.getLevel(),
+                                                     len(self.children))
