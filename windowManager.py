@@ -27,5 +27,6 @@ class WindowManager:
         self.updateAllWindows()
 
     def decGaps(self):
-        self.gap -= 2
+        self.gap = max(self.gap - 2, 0)
+
         self.updateAllWindows()
