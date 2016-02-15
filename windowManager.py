@@ -1,12 +1,12 @@
-import py32
+import windowApi
 from desktop import Desktop
 
 
 class WindowManager:
 
     def __init__(self, gap=6):
-        w, h = py32.getScreenResolution()
-        windows = py32.getAllWindows()
+        w, h = windowApi.getScreenResolution()
+        windows = windowApi.getAllWindows()
 
         self.desktop = Desktop(w, h, windows)
         self.gap = gap
@@ -17,8 +17,8 @@ class WindowManager:
             self.updateNodeLocations(root)
 
     def updateNodeLocations(self, node):
-        py32.restore(node.hwnd)
-        py32.moveWindow(node.hwnd, node.getWindowLoc(self.gap), node.getWindowDims(self.gap))
+        windowApi.restore(node.hwnd)
+        windowApi.moveWindow(node.hwnd, node.getWindowLoc(self.gap), node.getWindowDims(self.gap))
         for child in node.children:
             self.updateNodeLocations(child)
 
