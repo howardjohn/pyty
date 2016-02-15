@@ -3,8 +3,6 @@
 from enum import Enum
 
 
-
-
 class Split(Enum):
     """Enum containing information of how the window is split:
     horizontally or vertically.
@@ -139,7 +137,6 @@ class Node:
         height -= gap // 2 * (self.y == 0)
         height -= gap // 2 * (self.y + self.h == rootParent.h)
 
-        print(width, height)
         return (width, height)
 
     def getWindowLoc(self, gap=0):
@@ -156,7 +153,6 @@ class Node:
             x -= gap // 2
         if self.y != 0:
             y -= gap // 2
-        print(self.x, self.y, x, y)
         return (x, y)
 
     def __str__(self):
