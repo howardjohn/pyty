@@ -1,14 +1,6 @@
 """The node class stores all the information about the window it holds.
 """
-from enum import Enum
-
-
-class Split(Enum):
-    """Enum containing information of how the window is split:
-    horizontally or vertically.
-    """
-    vert = 0
-    horz = 1
+from data import Split, Location, Size
 
 
 class Node:
@@ -19,10 +11,8 @@ class Node:
         hwnd: the window held by this Node.
         parent (Node): parent Node.
         split (Split): Direction node is split relative to its siblings.
-        h (int): height
-        w (int): width
-        x (int): x coordinate
-        y (int): y coordinate
+        loc (namedlist): Location of upper left of window.
+        size (namedlist): (width,height) of window.
     """
 
     def __init__(self, hwnd, parent=None, w=None, h=None):
@@ -37,10 +27,9 @@ class Node:
         self.hwnd = hwnd
 
         self.split = Split((self.getLevel()) % 2)
-        self.w = w
-        self.h = h
-        self.x = None
-        self.y = None
+
+        self.loc = Location(None, None)
+        self.size = Size(w, h)
 
     def addChild(self, child):
         """Appends child to children list.
@@ -52,10 +41,10 @@ class Node:
         Then calls this function on all children.
         """
         if type(self.parent) is not Node:
-            self.x = 0
-            self.y = 0
+            self.loc.x = 0
+            self.loc.y = 0
         else:
-            self.x, self.y = self.getCoords()
+            self.loc.x, self.loc.y = self.getCoords()
 
         for child in self.children:
             child.updateCoords()
@@ -66,18 +55,18 @@ class Node:
         """
         # move relative to parent
         if self.parent.split == Split.vert:
-            x = self.parent.x + self.parent.w
-            y = self.parent.y
+            x = self.parent.loc.x + self.parent.size.w
+            y = self.parent.loc.y
         else:
-            x = self.parent.x
-            y = self.parent.y + self.parent.h
+            x = self.parent.loc.x
+            y = self.parent.loc.y + self.parent.size.h
 
         # move relative to siblings
         if self.split == Split.vert:
-            x += sum([c.w for c in
+            x += sum([child.size.w for child in
                       self.parent.children[:self.parent.children.index(self)]])
         else:
-            y += sum([c.h for c in
+            y += sum([child.size.h for child in
                       self.parent.children[:self.parent.children.index(self)]])
 
         return x, y
@@ -87,10 +76,11 @@ class Node:
         Then calls this function on all children.
         """
         if self.parent is None:
-            self.w, self.h = self.getDims(self.w, self.h, self.split)
+            self.size.w, self.size.h = self.getDims(
+                self.size.w, self.h, self.split)
         else:
-            self.w, self.h = self.getDims(
-                self.parent.w, self.parent.h, self.split)
+            self.size.w, self.size.h = self.getDims(
+                self.parent.size.w, self.parent.size.h, self.split)
 
         for child in self.children:
             child.updateDims()
@@ -129,13 +119,13 @@ class Node:
         while type(rootParent) is Node:
             rootParent = rootParent.parent
 
-        width = self.w - gap
-        width -= gap // 2 * (self.x == 0)
-        width -= gap // 2 * (self.x + self.w == rootParent.w)
+        width = self.size.w - gap
+        width -= gap // 2 * (self.loc.x == 0)
+        width -= gap // 2 * (self.loc.x + self.size.w == rootParent.size.w)
 
-        height = self.h - gap
-        height -= gap // 2 * (self.y == 0)
-        height -= gap // 2 * (self.y + self.h == rootParent.h)
+        height = self.size.h - gap
+        height -= gap // 2 * (self.loc.y == 0)
+        height -= gap // 2 * (self.loc.y + self.size.h == rootParent.size.h)
 
         return (width, height)
 
@@ -146,12 +136,12 @@ class Node:
         while type(rootParent) is Node:
             rootParent = rootParent.parent
 
-        x = self.x + gap
-        y = self.y + gap
+        x = self.loc.x + gap
+        y = self.loc.y + gap
 
-        if self.x != 0:
+        if self.loc.x != 0:
             x -= gap // 2
-        if self.y != 0:
+        if self.loc.y != 0:
             y -= gap // 2
         return (x, y)
 

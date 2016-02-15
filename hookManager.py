@@ -1,5 +1,5 @@
 import pyhk
-
+import sys
 
 class HookManager():
     """Registers hotkeys and calls WindowManager functions when pressed.
@@ -30,3 +30,6 @@ class HookManager():
 
         # start looking for hotkey.
         self.hot.start()
+
+    def exit():
+        sys.exit(1)

@@ -1,5 +1,5 @@
 from node import Node
-from node import Split
+from data import Split, Location, Size
 
 
 class Desktop:
@@ -20,8 +20,7 @@ class Desktop:
         # TODO: roots not root
         self.roots = [Node(hwnd=hwnds[0], parent=self, w=w, h=h)]
         self.roots[0].split = Split.vert
-        self.w = w
-        self.h = h
+        self.size = Size(w, h)
         for hwnd in hwnds[1:]:
             Node(hwnd, self.roots[0])
         for root in self.roots:
