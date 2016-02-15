@@ -120,6 +120,7 @@ def restore(hwnd):
     """
     wg.ShowWindow(hwnd, wc.SW_RESTORE)
 
+
 def getForegroundWindow():
     """Returns the currently focused window's hwnd.
     """
