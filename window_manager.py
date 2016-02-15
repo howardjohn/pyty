@@ -1,4 +1,5 @@
-import windowApi
+"""Manages and modifies windows."""
+import window_api
 from desktop import Desktop
 from node import Split
 
@@ -13,48 +14,48 @@ class WindowManager:
         Args:
             gap (int, optional): The gap between windows
         """
-        w, h = windowApi.getScreenResolution()
-        windows = windowApi.getAllWindows()
+        width, height = window_api.get_screen_resolution()
+        windows = window_api.get_all_windows()
 
-        self.desktop = Desktop(w, h, windows)
+        self.desktop = Desktop(width, height, windows)
         self.gap = gap
-        self.updateAllWindows()
+        self.update_all_windows()
 
-    def updateAllWindows(self):
+    def update_all_windows(self):
         """Tells all nodes to updateLocation.
         """
         for root in self.desktop.roots:
-            self.updateNodeLocations(root)
+            self.update_node_locations(root)
 
-    def updateNodeLocations(self, node):
+    def update_node_locations(self, node):
         """Tells a node to:
         * Update its location and size
         * Unmaximize it's window
         * Move it to its new location/size
         * Call this function on all of its children
         """
-        node.updateAll()
+        node.update_all()
 
-        windowApi.restore(node.hwnd)
-        windowApi.moveWindow(node.hwnd, node.getWindowLoc(self.gap),
-                             node.getWindowDims(self.gap))
+        window_api.restore(node.hwnd)
+        window_api.move_window(node.hwnd, node.get_window_loc(self.gap),
+                             node.get_window_dims(self.gap))
         for child in node.children:
-            self.updateNodeLocations(child)
+            self.update_node_locations(child)
 
-    def incGaps(self):
+    def increase_gaps(self):
         """Increase gap size.
         """
         self.gap += 2
-        self.updateAllWindows()
+        self.update_all_windows()
 
-    def decGaps(self):
+    def decrease_gaps(self):
         """Decrease gap size.
         """
         self.gap = max(self.gap - 2, 0)
-        self.updateAllWindows()
+        self.update_all_windows()
 
-    def swapSplit(self):
+    def swap_split(self):
         """Swap split type.
         """
         self.desktop.roots[0].split = Split.horz
-        self.updateAllWindows()
+        self.update_all_windows()

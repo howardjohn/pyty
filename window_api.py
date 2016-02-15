@@ -7,12 +7,12 @@ import win32api as wa
 import win32con as wc
 
 
-def getScreenResolution():
+def get_screen_resolution():
     """Returns the screen resolution in pixels (width, height)."""
     return wa.GetSystemMetrics(0), wa.GetSystemMetrics(1)
 
 
-def isRealWindow(hwnd):
+def is_real_window(hwnd):
     """Returns True if the hwnd is a visible window.
     http://stackoverflow.com/a/7292674/238472
     and https://github.com/Answeror/lit/blob/master/windows.py for details.
@@ -44,22 +44,22 @@ def isRealWindow(hwnd):
     if not wg.IsWindowVisible(hwnd) or not wg.IsWindow(hwnd):
         return False
 
-    hwndWalk = wc.NULL
-    hwndTry = ctypes.windll.user32.GetAncestor(hwnd, wc.GA_ROOTOWNER)
-    while hwndTry != hwndWalk:
-        hwndWalk = hwndTry
-        hwndTry = ctypes.windll.user32.GetLastActivePopup(hwndWalk)
-        if wg.IsWindowVisible(hwndTry):
+    hwnd_walk = wc.NULL
+    hwnd_try = ctypes.windll.user32.GetAncestor(hwnd, wc.GA_ROOTOWNER)
+    while hwnd_try != hwnd_walk:
+        hwnd_walk = hwnd_try
+        hwnd_try = ctypes.windll.user32.GetLastActivePopup(hwnd_walk)
+        if wg.IsWindowVisible(hwnd_try):
             break
 
-    if hwndWalk != hwnd:
+    if hwnd_walk != hwnd:
         return False
 
     # Removes some task tray programs and "Program Manager"
-    ti = TITLEBARINFO()
-    ti.cbSize = ctypes.sizeof(ti)
-    ctypes.windll.user32.GetTitleBarInfo(hwnd, ctypes.byref(ti))
-    if ti.rgstate[0] & wc.STATE_SYSTEM_INVISIBLE:
+    title_info = TITLEBARINFO()
+    title_info.cbSize = ctypes.sizeof(title_info)
+    ctypes.windll.user32.GetTitleBarInfo(hwnd, ctypes.byref(title_info))
+    if title_info.rgstate[0] & wc.STATE_SYSTEM_INVISIBLE:
         return False
 
     # Tool windows should not be displayed either
@@ -71,26 +71,25 @@ def isRealWindow(hwnd):
 
     # Backround AND FOREGROUND metro style apps.
     # Should be fixed for background only
-    # TODO I don't hate netflix
-    if pwi.dwStyle == 2496593920 or getText == 'Netflix':
+    if pwi.dwStyle == 2496593920 or get_text(hwnd) == 'Netflix':
         return False
 
     if pwi.dwExStyle & wc.WS_EX_NOACTIVATE:
         return False
 
-    if getText(hwnd) == "":
+    if get_text(hwnd) == "":
         print("WARNING: NO TEXT WINDOW: %s" % hwnd)
         return False
 
     return True
 
 
-def getAllWindows():
+def get_all_windows():
     """Returns the hwnd of all 'real' windows."""
     def call(hwnd, param):
         """The callback function for EnumWindows.
         Appends all hwnds to param list"""
-        if isRealWindow(hwnd):
+        if is_real_window(hwnd):
             param.append(hwnd)
 
     winds = []
@@ -98,13 +97,13 @@ def getAllWindows():
     return winds
 
 
-def getText(hwnd):
+def get_text(hwnd):
     """Returns the titlebar text of a window.
     """
     return ''.join(char for char in wg.GetWindowText(hwnd) if ord(char) <= 126)
 
 
-def moveWindow(hwnd, loc, size):
+def move_window(hwnd, loc, size):
     """Moves window.
     The 8 and 16 values are due to windows 10 having an invisible border.
 
@@ -121,7 +120,7 @@ def restore(hwnd):
     wg.ShowWindow(hwnd, wc.SW_RESTORE)
 
 
-def getForegroundWindow():
+def get_foreground_window():
     """Returns the currently focused window's hwnd.
     """
     return wg.GetForegroundWindow()

@@ -1,5 +1,6 @@
+"""Stores the Desktop class"""
 from node import Node
-from data import Split, Location, Size
+from data import Split, Size
 
 
 class Desktop:
@@ -9,19 +10,18 @@ class Desktop:
         roots: Root nodes holding all nodes.
     """
 
-    def __init__(self, w, h, hwnds):
+    def __init__(self, width, height, hwnds):
         """Initializes the Desktop class.
 
         Args:
-            w: width of the desktop.
-            h: height of the desktop.
+            width: width of the desktop.
+            height: height of the desktop.
             hwnds: all hwnds detected.
         """
-        # TODO: roots not root
-        self.roots = [Node(hwnd=hwnds[0], parent=self, w=w, h=h)]
+        self.roots = [Node(hwnd=hwnds[0], parent=self, width=width, height=height)]
         self.roots[0].split = Split.vert
-        self.size = Size(w, h)
+        self.size = Size(width, height)
         for hwnd in hwnds[1:]:
             Node(hwnd, self.roots[0])
         for root in self.roots:
-            root.updateAll()
+            root.update_all()

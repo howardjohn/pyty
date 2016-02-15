@@ -1,3 +1,4 @@
+"""Stores data structures"""
 from enum import Enum
 from namedlist import namedlist
 

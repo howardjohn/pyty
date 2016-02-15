@@ -1,5 +1,4 @@
-"""The node class stores all the information about the window it holds.
-"""
+"""Stores the Node class"""
 from data import Split, Location, Size
 
 
@@ -15,41 +14,41 @@ class Node:
         size (namedlist): (width,height) of window.
     """
 
-    def __init__(self, hwnd, parent=None, w=None, h=None):
+    def __init__(self, hwnd, parent=None, width=None, height=None):
         """Initializes the node. Tells the parent this is a child.
         Calculates the type of split.
         """
         self.parent = parent
 
-        if type(self.parent) is Node:
-            self.parent.addChild(self)
+        if isinstance(self.parent, Node):
+            self.parent.add_child(self)
         self.children = []
         self.hwnd = hwnd
 
-        self.split = Split((self.getLevel()) % 2)
+        self.split = Split((self.get_level()) % 2)
 
         self.loc = Location(None, None)
-        self.size = Size(w, h)
+        self.size = Size(width, height)
 
-    def addChild(self, child):
+    def add_child(self, child):
         """Appends child to children list.
         """
         self.children.append(child)
 
-    def updateCoords(self):
+    def update_coords(self):
         """Updates coordinates by calling the getCoords function.
         Then calls this function on all children.
         """
-        if type(self.parent) is not Node:
+        if not isinstance(self.parent, Node):
             self.loc.x = 0
             self.loc.y = 0
         else:
-            self.loc.x, self.loc.y = self.getCoords()
+            self.loc.x, self.loc.y = self.get_coords()
 
         for child in self.children:
-            child.updateCoords()
+            child.update_coords()
 
-    def getCoords(self):
+    def get_coords(self):
         """Returns the x, y coordinates by checking parent coordinates,
         and relative position of siblings based on type of split.
         """
@@ -71,70 +70,70 @@ class Node:
 
         return x, y
 
-    def updateDims(self):
+    def update_dims(self):
         """Updates dimensions by calling the getDims function.
         Then calls this function on all children.
         """
         if self.parent is None:
-            self.size.w, self.size.h = self.getDims(
-                self.size.w, self.h, self.split)
+            self.size.w, self.size.h = self.get_dims(
+                self.size.w, self.size.h, self.split)
         else:
-            self.size.w, self.size.h = self.getDims(
+            self.size.w, self.size.h = self.get_dims(
                 self.parent.size.w, self.parent.size.h, self.split)
 
         for child in self.children:
-            child.updateDims()
+            child.update_dims()
 
-    def getDims(self, w, h, split):
-        """Returns (w, h) value based on number of siblings and children.
+    def get_dims(self, width, height, split):
+        """Returns (width, height) value based on number of siblings and children.
         """
-        n = 1
-        if type(self.parent) is Node:
-            n += len(self.parent.children) - 1
-        n *= 2 if self.children else 1
+        divisor = 1
+        if isinstance(self.parent, Node):
+            divisor += len(self.parent.children) - 1
+        divisor *= 2 if self.children else 1
         if split == Split.horz:
-            return (w, h // n)
-        return (w // n, h)
+            return (width, height // divisor)
+        return (width // divisor, height)
 
-    def updateAll(self):
+    def update_all(self):
         """Calls both update functions.
         """
-        self.updateDims()
-        self.updateCoords()
+        self.update_dims()
+        self.update_coords()
 
-    def getLevel(self):
+    def get_level(self):
         """Returns the depth of the node (how many parents above it).
         """
         level = 1
         node = self
-        while type(node) is Node:
+        while isinstance(node, Node):
             level += 1
             node = node.parent
         return level
 
-    def getWindowDims(self, gap=0):
+    def get_window_dims(self, gap=0):
         """Returns the window dimensions, taking gap into account.
         """
-        rootParent = self
-        while type(rootParent) is Node:
-            rootParent = rootParent.parent
+        root_parent = self
+        while isinstance(root_parent, Node):
+            root_parent = root_parent.parent
 
         width = self.size.w - gap
         width -= gap // 2 * (self.loc.x == 0)
-        width -= gap // 2 * (self.loc.x + self.size.w == rootParent.size.w)
+        width -= gap // 2 * (self.loc.x + self.size.w == root_parent.size.w)
 
         height = self.size.h - gap
         height -= gap // 2 * (self.loc.y == 0)
-        height -= gap // 2 * (self.loc.y + self.size.h == rootParent.size.h)
+        height -= gap // 2 * (self.loc.y + self.size.h == root_parent.size.h)
 
         return (width, height)
 
-    def getWindowLoc(self, gap=0):
+    def get_window_loc(self, gap=0):
         """Returns the window location, taking gap into account.
         """
-        rootParent = self
-        while type(rootParent) is Node:
-            rootParent = rootParent.parent
+        root_parent = self
+        while isinstance(root_parent, Node):
+            root_parent = root_parent.parent
 
         x = self.loc.x + gap
         y = self.loc.y + gap
@@ -148,5 +147,5 @@ class Node:
     def __str__(self):
         """Returns a string representation of the Node.
         """
-        return '*Node* level:{0}, childs:{1}'.format(self.getLevel(),
+        return '*Node* level:{0}, childs:{1}'.format(self.get_level(),
                                                      len(self.children))
