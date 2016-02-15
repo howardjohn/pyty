@@ -1,5 +1,6 @@
 import windowApi
 from desktop import Desktop
+from node import Split
 
 
 class WindowManager:
@@ -17,8 +18,11 @@ class WindowManager:
             self.updateNodeLocations(root)
 
     def updateNodeLocations(self, node):
+        node.updateAll()
+
         windowApi.restore(node.hwnd)
-        windowApi.moveWindow(node.hwnd, node.getWindowLoc(self.gap), node.getWindowDims(self.gap))
+        windowApi.moveWindow(node.hwnd, node.getWindowLoc(self.gap),
+                             node.getWindowDims(self.gap))
         for child in node.children:
             self.updateNodeLocations(child)
 
@@ -28,5 +32,8 @@ class WindowManager:
 
     def decGaps(self):
         self.gap = max(self.gap - 2, 0)
+        self.updateAllWindows()
 
+    def swapSplit(self):
+        self.desktop.roots[0].split = Split.horz
         self.updateAllWindows()

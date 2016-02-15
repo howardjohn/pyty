@@ -95,7 +95,7 @@ class Node:
         for child in self.children:
             child.updateDims()
 
-    def getDims(self, w, h, split=Split.horz):
+    def getDims(self, w, h, split):
         """Returns (w, h) value based on number of siblings and children.
         """
         n = 1

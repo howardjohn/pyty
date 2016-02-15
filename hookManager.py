@@ -14,6 +14,8 @@ class HookManager():
         self.hot.addHotkey(['Win', 'Shift', 'G'], wm.incGaps)
         self.hot.addHotkey(['Win', 'Shift', 'mouse wheel up'], wm.incGaps)
         self.hot.addHotkey(['Win', 'Shift', 'mouse wheel down'], wm.decGaps)
+
+        self.hot.addHotkey(['Win', 'Shift', 'S'], wm.swapSplit)
         self.hot.addHotkey(['Win', 'Shift', 'E'], self.exit)
 
         # start looking for hotkey.
