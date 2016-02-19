@@ -30,15 +30,12 @@ class WindowManager:
     def update_node_locations(self, node):
         """Tells a node to:
         * Update its location and size
-        * Unmaximize it's window
         * Move it to its new location/size
         * Call this function on all of its children
         """
         node.update_all()
 
-        window_api.restore(node.hwnd)
-        window_api.move_window(node.hwnd, node.get_window_loc(self.gap),
-                               node.get_window_dims(self.gap))
+        node.window.move(node.get_window_loc(self.gap), node.get_window_dims(self.gap))
         for child in node.children:
             self.update_node_locations(child)
 

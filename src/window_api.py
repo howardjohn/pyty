@@ -140,3 +140,8 @@ def remove_titlebar(hwnd):
     style = wg.GetWindowLong(hwnd, wc.GWL_STYLE)
     style += wc.WS_CAPTION
     wg.SetWindowLong(hwnd, wc.GWL_STYLE, style)
+
+def get_window_rect(hwnd):
+    """Returns the windows dimensions in the form (x, y, w, h).
+    """
+    return wg.GetWindowRect(hwnd)

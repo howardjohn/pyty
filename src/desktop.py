@@ -1,7 +1,7 @@
 """Stores the Desktop class"""
 from node import Node
 from data import Split, Size
-
+from window import Window
 
 class Desktop:
     """Desktop holds the root nodes and provides methods to switch between these.
@@ -18,10 +18,12 @@ class Desktop:
             height: height of the desktop.
             hwnds: all hwnds detected.
         """
-        self.roots = [Node(hwnd=hwnds[0], parent=self, width=width, height=height)]
+        self.roots = [Node(window=Window(hwnds[0]), parent=self, width=width, height=height)]
         self.roots[0].split = Split.vert
         self.size = Size(width, height)
+
         for hwnd in hwnds[1:]:
-            Node(hwnd, self.roots[0])
+            Node(Window(hwnd), self.roots[0])
+
         for root in self.roots:
             root.update_all()

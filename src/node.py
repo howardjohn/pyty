@@ -1,20 +1,20 @@
 """Stores the Node class"""
 from data import Split, Location, Size
-
+from window import Window
 
 class Node:
     """Stores all information on a window.
 
     Attributes:
         children (list): holds all childen Nodes.
-        hwnd: the window held by this Node.
+        window: the window held by this Node.
         parent (Node): parent Node.
         split (Split): Direction node is split relative to its siblings.
         loc (namedlist): Location of upper left of window.
         size (namedlist): (width,height) of window.
     """
 
-    def __init__(self, hwnd, parent=None, width=None, height=None):
+    def __init__(self, window, parent=None, width=None, height=None):
         """Initializes the node. Tells the parent this is a child.
         Calculates the type of split.
         """
@@ -23,7 +23,7 @@ class Node:
         if isinstance(self.parent, Node):
             self.parent.add_child(self)
         self.children = []
-        self.hwnd = hwnd
+        self.window = window
 
         self.split = Split((self.get_level()) % 2)
 
