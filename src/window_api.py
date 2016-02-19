@@ -124,3 +124,19 @@ def get_foreground_window():
     """Returns the currently focused window's hwnd.
     """
     return wg.GetForegroundWindow()
+
+
+def add_titlebar(hwnd):
+    """Sets the window style to include a titlebar if it doesn't have one.
+    """
+    style = wg.GetWindowLong(hwnd, wc.GWL_STYLE)
+    style -= wc.WS_CAPTION
+    wg.SetWindowLong(hwnd, wc.GWL_STYLE, style)
+
+
+def remove_titlebar(hwnd):
+    """Sets window style to caption (no titlebar).
+    """
+    style = wg.GetWindowLong(hwnd, wc.GWL_STYLE)
+    style += wc.WS_CAPTION
+    wg.SetWindowLong(hwnd, wc.GWL_STYLE, style)
