@@ -38,7 +38,7 @@ class WindowManager:
 
         window_api.restore(node.hwnd)
         window_api.move_window(node.hwnd, node.get_window_loc(self.gap),
-                             node.get_window_dims(self.gap))
+                               node.get_window_dims(self.gap))
         for child in node.children:
             self.update_node_locations(child)
 
