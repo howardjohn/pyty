@@ -19,7 +19,7 @@ class WindowManager:
 
         self.desktop = Desktop(width, height, windows)
         self.gap = gap
-        
+
         self.update_all_windows()
 
     def update_all_windows(self):
@@ -36,7 +36,8 @@ class WindowManager:
         """
         node.update_all()
 
-        node.window.move(node.get_window_loc(self.gap), node.get_window_dims(self.gap))
+        node.window.move(node.get_window_loc(self.gap),
+                         node.get_window_dims(self.gap))
         for child in node.children:
             self.update_node_locations(child)
 

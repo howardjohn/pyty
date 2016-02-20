@@ -36,4 +36,3 @@ class HookManager():
 
         # start looking for hotkey.
         self.hot.start()
-

@@ -3,6 +3,7 @@ from node import Node
 from data import Split, Size
 from window import Window
 
+
 class Desktop:
     """Desktop holds the root nodes and provides methods to switch between these.
 
@@ -18,7 +19,10 @@ class Desktop:
             height: height of the desktop.
             hwnds: all hwnds detected.
         """
-        self.roots = [Node(window=Window(hwnds[0]), parent=self, width=width, height=height)]
+        self.roots = [Node(window=Window(hwnds[0]),
+                           parent=self, width=width, height=height)]
+
+        # TODO: Fix crash when ran with no windows
         self.roots[0].split = Split.vert
         self.size = Size(width, height)
 

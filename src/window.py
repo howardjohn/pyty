@@ -9,6 +9,7 @@ class Window:
         hwnd: the window handle.
         original_rect: the original bounding rectangle of the window.
     """
+
     def __init__(self, hwnd):
         """Initializes attributes and sets up the window.
         """
@@ -24,6 +25,6 @@ class Window:
         window_api.remove_titlebar(self.hwnd)
 
     def move(self, location, dimensions):
-      """Moves the window the specified location and dimensions.
-      """
-      window_api.move_window(self.hwnd, location, dimensions)
+        """Moves the window the specified location and dimensions.
+        """
+        window_api.move_window(self.hwnd, location, dimensions)
