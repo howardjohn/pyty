@@ -1,7 +1,7 @@
 """Manages and modifies windows."""
 import window_api
 from desktop import Desktop
-from node import SplitEE
+from node import Split
 
 
 class WindowManager:
