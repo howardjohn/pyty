@@ -1,6 +1,6 @@
 """Stores the Node class"""
 from data import Split, Location, Size
-from window import Window
+
 
 class Node:
     """Stores all information on a window.
@@ -22,9 +22,11 @@ class Node:
 
         if isinstance(self.parent, Node):
             self.parent.add_child(self)
+
         self.children = []
         self.window = window
 
+        # Initially nodes should alternate split at each level
         self.split = Split((self.get_level()) % 2)
 
         self.loc = Location(None, None)
@@ -88,15 +90,20 @@ class Node:
         """Returns (width, height) value based on number of siblings and children.
         """
         divisor = 1
+
+        # share space with siblings
         if isinstance(self.parent, Node):
             divisor += len(self.parent.children) - 1
+
+        # share space with children
         divisor *= 2 if self.children else 1
+
         if split == Split.horz:
             return (width, height // divisor)
         return (width // divisor, height)
 
     def update_all(self):
-        """Calls both update functions.
+        """Calls all update functions.
         """
         self.update_dims()
         self.update_coords()

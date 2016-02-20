@@ -1,7 +1,7 @@
 """Manages and modifies windows."""
 import window_api
 from desktop import Desktop
-from node import Split
+from node import SplitEE
 
 
 class WindowManager:
@@ -19,6 +19,7 @@ class WindowManager:
 
         self.desktop = Desktop(width, height, windows)
         self.gap = gap
+        
         self.update_all_windows()
 
     def update_all_windows(self):

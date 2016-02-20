@@ -45,6 +45,7 @@ def is_real_window(hwnd):
         return False
 
     hwnd_walk = wc.NULL
+    # See if we are the last active visible popup
     hwnd_try = ctypes.windll.user32.GetAncestor(hwnd, wc.GA_ROOTOWNER)
     while hwnd_try != hwnd_walk:
         hwnd_walk = hwnd_try
@@ -71,7 +72,7 @@ def is_real_window(hwnd):
 
     # Backround AND FOREGROUND metro style apps.
     # Should be fixed for background only
-    if pwi.dwStyle == 2496593920 or get_text(hwnd) == 'Netflix':
+    if pwi.dwStyle == 2496593920:
         return False
 
     if pwi.dwExStyle & wc.WS_EX_NOACTIVATE:
@@ -98,20 +99,21 @@ def get_all_windows():
 
 
 def get_text(hwnd):
-    """Returns the titlebar text of a window.
+    """Returns the titlebar text of a window (only standard ascii).
     """
     return ''.join(char for char in wg.GetWindowText(hwnd) if ord(char) <= 126)
 
 
 def move_window(hwnd, loc, size):
     """Moves window.
-    The 8 and 16 values are due to windows 10 having an invisible border.
 
     Args:
         loc: (x,y) of new location
         size: (width, height) of new location
     """
-    wg.MoveWindow(hwnd, loc[0] - 8, loc[1], size[0] + 16, size[1] + 8, True)
+    BORDER_WIDTH = 8  # Windows 10 has an invisible 8px border
+    wg.MoveWindow(hwnd, loc[0] - BORDER_WIDTH, loc[1],
+                  size[0] + 2 * BORDER_WIDTH, size[1] + BORDER_WIDTH, True)
 
 
 def restore(hwnd):
@@ -140,6 +142,7 @@ def remove_titlebar(hwnd):
     style = wg.GetWindowLong(hwnd, wc.GWL_STYLE)
     style += wc.WS_CAPTION
     wg.SetWindowLong(hwnd, wc.GWL_STYLE, style)
+
 
 def get_window_rect(hwnd):
     """Returns the windows dimensions in the form (x, y, w, h).
