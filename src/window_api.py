@@ -121,10 +121,12 @@ def restore(hwnd):
     """
     wg.ShowWindow(hwnd, wc.SW_RESTORE)
 
+
 def maximize(hwnd):
     """Maximizes the window.
     """
     wg.ShowWindow(hwnd, wc.SW_MAXIMIZE)
+
 
 def get_foreground_window():
     """Returns the currently focused window's hwnd.
@@ -141,6 +143,7 @@ def add_titlebar(hwnd):
     maximize(hwnd)
     restore(hwnd)
 
+
 def remove_titlebar(hwnd):
     """Sets window style to caption (no titlebar).
     """
@@ -148,6 +151,8 @@ def remove_titlebar(hwnd):
     style = wg.GetWindowLong(hwnd, wc.GWL_STYLE)
     style &= ~wc.WS_CAPTION
     wg.SetWindowLong(hwnd, wc.GWL_STYLE, style)
+    maximize(hwnd)
+    restore(hwnd)
 
 
 def get_window_rect(hwnd):

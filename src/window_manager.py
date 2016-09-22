@@ -59,7 +59,10 @@ class WindowManager:
         """Swap split type.
         """
         # TODO find current window and change split on that
-        self.desktop.roots[0].split = Split.horz
+        hwnd = window_api.get_foreground_window()
+        node = self.findNode(hwnd)
+        if node:
+            node.split = Split((node.split.value + 1) % 2)
         self.update_all_windows()
 
     def exit(self):
@@ -76,3 +79,17 @@ class WindowManager:
 
         for child in node.children:
             self.teardown(child)
+
+    def findNode(self, hwnd, nodes=None):
+        """Searches through all nodes for the given hwnd.
+        If not found, returns null.
+        """
+        if nodes is None:
+            nodes = self.desktop.roots
+
+        for node in nodes:
+            if node.window.hwnd == hwnd:
+                return node
+            found = self.findNode(hwnd, node.children)
+            if found:
+                return found
