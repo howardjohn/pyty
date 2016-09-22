@@ -21,11 +21,11 @@ class Desktop:
         """
         self.roots = [Node(window=Window(hwnds[0]),
                            parent=self, width=width, height=height)]
-
         # TODO: Fix crash when ran with no windows
         self.roots[0].split = Split.vert
         self.size = Size(width, height)
-
+        self.width = width
+        self.height = height
         for hwnd in hwnds[1:]:
             Node(Window(hwnd), self.roots[0])
 

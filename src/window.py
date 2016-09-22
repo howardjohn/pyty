@@ -30,5 +30,8 @@ class Window:
         window_api.move_window(self.hwnd, location, dimensions)
 
     def teardown_window(self):
+        """Resets the window to original qualities.
+        """
+        # TODO store window state
         # TODO reset to original size and locs
         window_api.add_titlebar(self.hwnd)

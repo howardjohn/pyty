@@ -2,7 +2,7 @@
 import window_api
 from desktop import Desktop
 from node import Split
-
+import sys
 
 class WindowManager:
     """Initializes, keeps track of, and calls functions to modify windows.
@@ -51,7 +51,6 @@ class WindowManager:
     def decrease_gaps(self):
         """Decrease gap size.
         """
-        print(self)
         self.gap = max(self.gap - 2, 0)
         self.update_all_windows()
 
@@ -65,6 +64,8 @@ class WindowManager:
         # TODO: save original state and restore after
         for root in self.desktop.roots:
             self.teardown(root)
+
+        sys.exit(0)
 
     def teardown(self, node):
         """Tells a node to teardown its window and tells its children to.

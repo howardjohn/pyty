@@ -76,12 +76,8 @@ class Node:
         """Updates dimensions by calling the getDims function.
         Then calls this function on all children.
         """
-        if not isinstance(self.parent, Node):
-            self.size.w, self.size.h = self.get_dims(
-                self.size.w, self.size.h, self.split)
-        else:
-            self.size.w, self.size.h = self.get_dims(
-                self.parent.size.w, self.parent.size.h, self.split)
+        self.size.w, self.size.h = self.get_dims(
+            self.parent.size.w, self.parent.size.h, self.split)
 
         for child in self.children:
             child.update_dims()
