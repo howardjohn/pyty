@@ -36,6 +36,7 @@ class WindowManager:
         """
         node.update_all()
 
+        # TODO Don't move if no need
         node.window.move(node.get_window_loc(self.gap),
                          node.get_window_dims(self.gap))
         for child in node.children:
@@ -50,6 +51,7 @@ class WindowManager:
     def decrease_gaps(self):
         """Decrease gap size.
         """
+        print(self)
         self.gap = max(self.gap - 2, 0)
         self.update_all_windows()
 
@@ -58,3 +60,16 @@ class WindowManager:
         """
         self.desktop.roots[0].split = Split.horz
         self.update_all_windows()
+
+    def exit(self):
+        # TODO: save original state and restore after
+        for root in self.desktop.roots:
+            self.teardown(root)
+
+    def teardown(self, node):
+        """Tells a node to teardown its window and tells its children to.
+        """
+        node.window.teardown_window()
+
+        for child in node.children:
+            self.teardown(child)

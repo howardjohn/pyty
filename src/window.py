@@ -28,3 +28,7 @@ class Window:
         """Moves the window the specified location and dimensions.
         """
         window_api.move_window(self.hwnd, location, dimensions)
+
+    def teardown_window(self):
+        # TODO reset to original size and locs
+        window_api.add_titlebar(self.hwnd)

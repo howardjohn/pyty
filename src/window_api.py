@@ -71,7 +71,7 @@ def is_real_window(hwnd):
     ctypes.windll.user32.GetWindowInfo(hwnd, ctypes.byref(pwi))
 
     # Backround AND FOREGROUND metro style apps.
-    # Should be fixed for background only
+    # TODO Should be fixed for background only
     if pwi.dwStyle == 2496593920:
         return False
 
@@ -132,7 +132,7 @@ def add_titlebar(hwnd):
     """Sets the window style to include a titlebar if it doesn't have one.
     """
     style = wg.GetWindowLong(hwnd, wc.GWL_STYLE)
-    style -= wc.WS_CAPTION
+    style &= ~wc.WS_CAPTION
     wg.SetWindowLong(hwnd, wc.GWL_STYLE, style)
 
 
@@ -140,7 +140,7 @@ def remove_titlebar(hwnd):
     """Sets window style to caption (no titlebar).
     """
     style = wg.GetWindowLong(hwnd, wc.GWL_STYLE)
-    style += wc.WS_CAPTION
+    style |= wc.WS_CAPTION
     wg.SetWindowLong(hwnd, wc.GWL_STYLE, style)
 
 

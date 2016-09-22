@@ -1,6 +1,5 @@
 """Manages hotkeys"""
-import sys
-import pyhk
+from global_hotkeys import GlobalHotkeys as ghk
 
 
 class HookManager():
@@ -18,21 +17,20 @@ class HookManager():
             win_manager (TYPE): Description
         """
         self.win_manager = win_manager
-        # create pyhk class instance
-        self.hot = pyhk.pyhk()
 
-        # add hotkey
-        self.hot.addHotkey(['Win', 'Shift', 'Alt', 'G'],
-                           win_manager.decrease_gaps)
-        self.hot.addHotkey(['Win', 'Shift', 'G'],
-                           win_manager.increase_gaps)
-        self.hot.addHotkey(['Win', 'Shift', 'mouse wheel up'],
-                           win_manager.increase_gaps)
-        self.hot.addHotkey(['Win', 'Shift', 'mouse wheel down'],
-                           win_manager.decrease_gaps)
+        MOD = ghk.MOD_WIN | ghk.MOD_SHIFT
+        ALTMOD = MOD | ghk.MOD_ALT
 
-        self.hot.addHotkey(['Win', 'Shift', 'S'], win_manager.swap_split)
-        self.hot.addHotkey(['Win', 'Shift', 'E'], sys.exit)
+        # Add hotkeys
+        ghk.register(ghk.VK_G, MOD, win_manager.increase_gaps)
+        ghk.register(ghk.VK_G, ALTMOD, win_manager.decrease_gaps)
+
+        # TODO scroll hotkey?
+        # ghk.register(ghk.VK_mouse wheel up, MOD, win_manager.increase_gaps)
+        # ghk.register(ghk.VK_mouse wheel down, MOD, win_manager.decrease_gaps)
+
+        ghk.register(ghk.VK_S, MOD, win_manager.swap_split)
+        ghk.register(ghk.VK_E, MOD, win_manager.exit)
 
         # start looking for hotkey.
-        self.hot.start()
+        ghk.listen()
