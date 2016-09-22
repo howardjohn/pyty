@@ -131,17 +131,17 @@ def get_foreground_window():
 def add_titlebar(hwnd):
     """Sets the window style to include a titlebar if it doesn't have one.
     """
-    # TODO make sure this accounts for more cases
     style = wg.GetWindowLong(hwnd, wc.GWL_STYLE)
-    # style &= ~wc.WS_CAPTION
+    style |= wc.WS_CAPTION
     wg.SetWindowLong(hwnd, wc.GWL_STYLE, style)
 
 
 def remove_titlebar(hwnd):
     """Sets window style to caption (no titlebar).
     """
+    # TODO make sure this accounts for more cases
     style = wg.GetWindowLong(hwnd, wc.GWL_STYLE)
-    # style |= wc.WS_CAPTION
+    style &= ~wc.WS_CAPTION
     wg.SetWindowLong(hwnd, wc.GWL_STYLE, style)
 
 

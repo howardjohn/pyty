@@ -4,6 +4,7 @@ from desktop import Desktop
 from node import Split
 import sys
 
+
 class WindowManager:
     """Initializes, keeps track of, and calls functions to modify windows.
     """
@@ -57,6 +58,7 @@ class WindowManager:
     def swap_split(self):
         """Swap split type.
         """
+        # TODO find current window and change split on that
         self.desktop.roots[0].split = Split.horz
         self.update_all_windows()
 
