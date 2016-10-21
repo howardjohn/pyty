@@ -16,3 +16,4 @@ class Split(Enum):
         return Split((self.value + 1) % 2)
 
 Rect = namedlist('Rect', 'x, y, w, h')
+Size = namedlist('Size', 'w, h')

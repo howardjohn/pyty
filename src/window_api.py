@@ -78,7 +78,7 @@ def is_real_window(hwnd):
     if pwi.dwExStyle & wc.WS_EX_NOACTIVATE:
         return False
 
-    if get_text(hwnd) == "" or get_text(hwnd) != "Untitled - Notepad":
+    if get_text(hwnd) == "":
         print("WARNING: NO TEXT WINDOW: %s" % hwnd)
         return False
 
@@ -111,7 +111,7 @@ def move_window(hwnd, loc, size):
         loc: (x,y) of new location
         size: (width, height) of new location
     """
-    BORDER_WIDTH = 8  # Windows 10 has an invisible 8px border
+    BORDER_WIDTH = 7  # Windows 10 has an invisible 8px border
     wg.MoveWindow(hwnd, int(loc[0]) - BORDER_WIDTH, int(loc[1]),
                   int(size[0]) + 2 * BORDER_WIDTH, int(size[1]) + BORDER_WIDTH,
                   True)
