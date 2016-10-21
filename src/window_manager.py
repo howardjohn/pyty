@@ -1,7 +1,6 @@
 """Manages and modifies windows."""
 import window_api
 from desktop import Desktop
-from node import Split
 import sys
 
 
@@ -14,82 +13,84 @@ class WindowManager:
 
         Args:
             gap (int, optional): The gap between windows
+
+        Attributes:
+            desktop (Desktop): Stores the desktop object.
         """
         width, height = window_api.get_screen_resolution()
-        windows = window_api.get_all_windows()
 
-        self.desktop = Desktop(width, height, windows)
+        # TODO add multi-desktop support
+        # TODO consider desktop manipulating windows.
+        self.desktop = Desktop(width, height)
         self.gap = gap
 
-        self.update_all_windows()
-
-    def update_all_windows(self):
-        """Tells all nodes to updateLocation.
-        """
-        for root in self.desktop.roots:
-            self.update_node_locations(root)
-
-    def update_node_locations(self, node):
-        """Tells a node to:
-        * Update its location and size
-        * Move it to its new location/size
-        * Call this function on all of its children
-        """
-        node.update_all()
-
-        # TODO Don't move if no need
-        node.window.move(node.get_window_loc(self.gap),
-                         node.get_window_dims(self.gap))
-        for child in node.children:
-            self.update_node_locations(child)
+        # TODO option to add all on run
+        for window in window_api.get_all_windows():
+            self.desktop.insert(window)
 
     def increase_gaps(self):
         """Increase gap size.
         """
         self.gap += 2
-        self.update_all_windows()
+        self.desktop.update_all(self.desktop.root)
 
     def decrease_gaps(self):
         """Decrease gap size.
         """
         self.gap = max(self.gap - 2, 0)
-        self.update_all_windows()
+        self.desktop.update_all(self.desktop.root)
 
     def swap_split(self):
-        """Swap split type.
+        """Swap split type on focused window.
         """
-        # TODO find current window and change split on that
         hwnd = window_api.get_foreground_window()
-        node = self.findNode(hwnd)
+        node = self.findNode(hwnd, self.desktop.root)
+
         if node:
-            node.split = Split((node.split.value + 1) % 2)
-        self.update_all_windows()
+            if node.parent:
+                node.parent.split = node.parent.split.swap()
+            else:
+                node.split = node.split.swap()
+        self.desktop.update_all(self.desktop.root)
 
     def exit(self):
+        """Tears down all windows and exits.
+        """
         # TODO: save original state and restore after
-        for root in self.desktop.roots:
-            self.teardown(root)
+        self.teardown(self.desktop.root)
 
         sys.exit(0)
 
     def teardown(self, node):
         """Tells a node to teardown its window and tells its children to.
         """
-        node.window.teardown_window()
+        if node is None:
+            return
 
-        for child in node.children:
-            self.teardown(child)
+        if node.window:
+            node.window.teardown_window()
 
-    def findNode(self, hwnd, nodes=None):
+        self.teardown(node.first)
+        self.teardown(node.second)
+
+    def findNode(self, hwnd, node):
         """Searches through all nodes for the given hwnd.
         If not found, returns null.
         """
-        if nodes is None:
-            nodes = self.desktop.roots
+        if node is None:
+            return None
+        if node.window and node.window.hwnd == hwnd:
+            return node
+        return self.findNode(hwnd, node.first) or self.findNode(hwnd, node.second)
 
-        for node in nodes:
-            if node.window.hwnd == hwnd:
-                return node
-            found = self.findNode(hwnd, node.children)
-            if found:
-                return found
+    def insert(self):
+        """Tells desktop to insert focused window.
+        """
+        focused = window_api.get_foreground_window()
+        self.desktop.insert(focused)
+
+    def remove(self):
+        """Tells desktop to remove focused window.
+        """
+        focused = window_api.get_foreground_window()
+        # TODO implement desktop.remove

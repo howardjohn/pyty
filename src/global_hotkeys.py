@@ -84,5 +84,11 @@ class GlobalHotkeys():
                          list(range(ord('0'), ord('9') + 1))):
             setattr(self, 'VK_' + chr(key_code), key_code)
 
+    @classmethod
+    def _include_custom_vks(self):
+        setattr(self, 'VK_OEM_PLUS', 0xBB)
+        setattr(self, 'VK_OEM_MINUS', 0xBD)
+
 GlobalHotkeys._include_defined_vks()
 GlobalHotkeys._include_alpha_numeric_vks()
+GlobalHotkeys._include_custom_vks()
