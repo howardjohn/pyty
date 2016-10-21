@@ -112,8 +112,9 @@ def move_window(hwnd, loc, size):
         size: (width, height) of new location
     """
     BORDER_WIDTH = 8  # Windows 10 has an invisible 8px border
-    wg.MoveWindow(hwnd, loc[0] - BORDER_WIDTH, loc[1],
-                  size[0] + 2 * BORDER_WIDTH, size[1] + BORDER_WIDTH, True)
+    wg.MoveWindow(hwnd, int(loc[0]) - BORDER_WIDTH, int(loc[1]),
+                  int(size[0]) + 2 * BORDER_WIDTH, int(size[1]) + BORDER_WIDTH,
+                  True)
 
 
 def restore(hwnd):
@@ -159,3 +160,8 @@ def get_window_rect(hwnd):
     """Returns the windows dimensions in the form (x, y, w, h).
     """
     return wg.GetWindowRect(hwnd)
+
+
+def focus_window(hwnd):
+    wg.ShowWindow(hwnd, wc.SW_SHOW)
+    wg.SetForegroundWindow(hwnd)

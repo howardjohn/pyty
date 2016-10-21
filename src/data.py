@@ -10,5 +10,9 @@ class Split(Enum):
     vert = 0
     horz = 1
 
-Location = namedlist('Location', 'x, y')
-Size = namedlist('Size', 'w, h')
+    def swap(self):
+        """Returns the opposite split.
+        """
+        return Split((self.value + 1) % 2)
+
+Rect = namedlist('Rect', 'x, y, w, h')

@@ -14,7 +14,7 @@ class HookManager():
         """Initializes the hook manager given a WindowManager
 
         Args:
-            win_manager (TYPE): Description
+            win_manager (WindowManager): Description
         """
         self.win_manager = win_manager
 
@@ -31,6 +31,9 @@ class HookManager():
 
         ghk.register(ghk.VK_S, MOD, win_manager.swap_split)
         ghk.register(ghk.VK_E, MOD, win_manager.exit)
+
+        ghk.register(ghk.VK_OEM_PLUS, MOD, win_manager.insert)
+        ghk.register(ghk.VK_OEM_MINUS, MOD, win_manager.remove)
 
         # start looking for hotkey.
         ghk.listen()
