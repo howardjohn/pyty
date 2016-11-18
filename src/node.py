@@ -57,21 +57,16 @@ class Node:
         if self.parent is None:
             return self.rect
 
+        self.rect = Rect(self.parent.rect.x,
+                         self.parent.rect.y,
+                         self.parent.rect.w,
+                         self.parent.rect.h * self.parent.ratio)
         # TODO: gap
-        if self.parent.split == Split.horz:
-            self.rect = Rect(self.parent.rect.x,
-                             self.parent.rect.y +
-                             (0 if self.is_first_child()
-                              else self.parent.rect.h * self.parent.ratio),
-                             self.parent.rect.w,
-                             self.parent.rect.h * self.parent.ratio)
-        else:
-            self.rect = Rect(self.parent.rect.x +
-                             (0 if self.is_first_child()
-                              else self.parent.rect.w * self.parent.ratio),
-                             self.parent.rect.y,
-                             self.parent.rect.w * self.parent.ratio,
-                             self.parent.rect.h)
+
+        if self.parent.split == Split.horz and not self.is_first_child():
+            self.rect.y += self.parent.rect.h * self.parent.ratio
+        elif self.parent.split == Split.vert and not self.is_first_child():
+            self.rect.x += self.parent.rect.w * self.parent.ratio
 
     def __str__(self):
         """Returns a string representation of the Node.
