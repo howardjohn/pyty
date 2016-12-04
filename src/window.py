@@ -15,7 +15,6 @@ class Window:
         """
         self.hwnd = hwnd
         self.original_rect = window_api.get_window_rect(hwnd)
-
         self.setup_window()
 
     def setup_window(self):
@@ -34,6 +33,7 @@ class Window:
         """Resets the window to original qualities.
         """
         window_api.add_titlebar(self.hwnd)
+        self.move(self.original_rect)
 
     def get_rect(self):
         return window_api.get_window_rect(self.hwnd)

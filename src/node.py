@@ -35,7 +35,7 @@ class Node:
             IF the rect has changed, then the window will move.
         """
         if self.window is not None:
-            old_rect = Rect(*self.window.get_rect())
+            old_rect = self.window.get_rect()
         else:
             old_rect = self.rect
 

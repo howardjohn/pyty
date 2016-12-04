@@ -5,6 +5,7 @@ import ctypes.wintypes
 import win32gui as wg
 import win32api as wa
 import win32con as wc
+from data import Rect
 
 
 def get_screen_resolution():
@@ -157,9 +158,10 @@ def remove_titlebar(hwnd):
 
 
 def get_window_rect(hwnd):
-    """Returns the windows dimensions in the form (x, y, w, h).
+    """Returns the windows dimensions in the form Rect(x, y, w, h).
     """
-    return wg.GetWindowRect(hwnd)
+    rect = wg.GetWindowRect(hwnd)
+    return Rect(rect[0], rect[1], rect[2] - rect[0], rect[3] - rect[1])
 
 
 def focus_window(hwnd):
