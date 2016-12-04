@@ -15,5 +15,15 @@ class Split(Enum):
         """
         return Split((self.value + 1) % 2)
 
+
+class Dir(Enum):
+    """Enum containing information of how the direction in 4 ways.
+    """
+    up = 0
+    right = 1
+    down = 2
+    left = 3
+
+
 Rect = namedlist('Rect', 'x, y, w, h')
 Size = namedlist('Size', 'w, h')

@@ -2,6 +2,7 @@
 import window_api
 from desktop import Desktop
 import sys
+from data import Dir
 
 
 def constrain(n, low=0, high=1):
@@ -39,8 +40,7 @@ class WindowManager:
     def change_ratio(self, delta):
         """Change ratio of parent window to expand focused window.
         """
-        hwnd = window_api.get_foreground_window()
-        node = self.find_node(hwnd, self.desktop.root)
+        node = self.get_focused_node()
         if node.is_second_child():
             delta = -delta
 
@@ -48,11 +48,34 @@ class WindowManager:
             node.parent.ratio = constrain(node.parent.ratio + delta, 0, 1)
             self.desktop.update_all(self.desktop.root)
 
+    def change_focus(self, dir):
+        """Changes focused window based on relation in tree.
+        Up focuses parent, down focuses child (if any) or sibling
+        """
+        node = self.get_focused_node()
+
+        # parent can never be None because then there would be one window only
+        if node is None and none.parent is not None:
+            return
+
+        focus = None
+        if dir == Dir.up:
+            if node.parent.parent is not None:
+                focus = node.parent.parent.first
+        elif dir == Dir.down:
+            if node.is_first_child():
+                focus = node.parent.second
+            else:
+                focus = node.parent.first
+            while focus.window is None:
+                focus = focus.first
+        if focus is not None and focus.window is not None:
+            window_api.focus_window(focus.window.hwnd)
+
     def swap_split(self):
         """Swap split type on focused window.
         """
-        hwnd = window_api.get_foreground_window()
-        node = self.find_node(hwnd, self.desktop.root)
+        node = self.get_focused_node()
 
         if node is not None:
             self.swap_split_recurse(node.parent)
@@ -121,3 +144,9 @@ class WindowManager:
         """Tells desktop to remove all windows.
         """
         # TODO implement desktop.remove_all
+
+    def get_focused_node(self):
+        """Returns the node that is currently focused.
+        """
+        hwnd = window_api.get_foreground_window()
+        return self.find_node(hwnd, self.desktop.root)
