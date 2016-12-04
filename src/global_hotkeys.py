@@ -22,7 +22,7 @@ class GlobalHotkeys():
     MOD_WIN = win32con.MOD_WIN
 
     @classmethod
-    def register(self, vk, modifier=0, func=None):
+    def register(self, vk, modifier=0, func=None, **kwargs):
         """
         vk is a windows virtual key code
          - can use ord('X') for A-Z, and 0-1 (note uppercase letter only)
@@ -41,7 +41,7 @@ class GlobalHotkeys():
                 return f
             return register_decorator
         else:
-            self.key_mapping.append((vk, modifier, func))
+            self.key_mapping.append((vk, modifier, func, kwargs))
 
     @classmethod
     def listen(self):
@@ -49,7 +49,7 @@ class GlobalHotkeys():
         Start the message pump
         """
 
-        for index, (vk, modifiers, func) in enumerate(self.key_mapping):
+        for index, (vk, modifiers, func, kwargs) in enumerate(self.key_mapping):
             if not self.user32.RegisterHotKey(None, index, modifiers, vk):
                 raise Exception('Unable to register hot key: ' + str(vk) +
                                 ' error code is: ' +
@@ -59,16 +59,16 @@ class GlobalHotkeys():
             msg = ctypes.wintypes.MSG()
             while self.user32.GetMessageA(ctypes.byref(msg), None, 0, 0) != 0:
                 if msg.message == win32con.WM_HOTKEY:
-                    (vk, modifiers, func) = self.key_mapping[msg.wParam]
+                    (vk, modifiers, func, kwargs) = self.key_mapping[msg.wParam]
                     if not func:
                         break
-                    func()
+                    func(**kwargs)
 
                 self.user32.TranslateMessage(ctypes.byref(msg))
                 self.user32.DispatchMessageA(ctypes.byref(msg))
 
         finally:
-            for index, (vk, modifiers, func) in enumerate(self.key_mapping):
+            for index, (vk, modifiers, func, kwargs) in enumerate(self.key_mapping):
                 self.user32.UnregisterHotKey(None, index)
 
     @classmethod

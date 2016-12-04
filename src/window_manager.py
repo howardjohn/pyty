@@ -95,7 +95,6 @@ class WindowManager:
         self.teardown(node.first)
         self.teardown(node.second)
 
-    # todo default node to root
     def find_node(self, hwnd, node):
         """Searches through all nodes for the given hwnd.
         If not found, returns None.
