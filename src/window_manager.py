@@ -24,7 +24,6 @@ class WindowManager:
         self.desktop = Desktop(width, height)
         self.gap = gap
 
-
     def increase_gaps(self):
         """Increase gap size.
         """
@@ -72,7 +71,7 @@ class WindowManager:
 
     def findNode(self, hwnd, node):
         """Searches through all nodes for the given hwnd.
-        If not found, returns null.
+        If not found, returns None.
         """
         if node is None:
             return None
@@ -80,22 +79,27 @@ class WindowManager:
             return node
         return self.findNode(hwnd, node.first) or self.findNode(hwnd, node.second)
 
-    def insert(self):
-        """Tells desktop to insert focused window.
+    def insert(self, hwnd=None):
+        """Tells desktop to insert given window, or focused window if none.
         """
-        focused = window_api.get_foreground_window()
-        self.desktop.insert(focused)
+        if hwnd is None:
+            hwnd = window_api.get_foreground_window()
+
+        # Window already inserted
+        if self.findNode(hwnd, self.desktop.root) is not None:
+            return
+
+        self.desktop.insert(hwnd)
 
     def insert_all(self):
         """Tells desktop to insert all windows.
         """
         for window in window_api.get_all_windows():
-            self.desktop.insert(window)
+            self.insert(window)
 
     def remove(self):
         """Tells desktop to remove focused window.
         """
-        focused = window_api.get_foreground_window()
         # TODO implement desktop.remove
 
     def remove_all(self):

@@ -30,15 +30,23 @@ class Desktop:
         current_nodes = [self.root]
         next_nodes = []
         output = ""
+        pad = "\t\t"
+        first = True
         while any(current_nodes):
+            output += pad
             for node in current_nodes:
-                output += str(node.rect if node else "NA") + " | "
+                if not first:
+                    output += " | "
+                first = False
+                output += str(node.rect if node else "NA")
                 if node:
                     next_nodes.append(node.first)
                     next_nodes.append(node.second)
             current_nodes = next_nodes
             next_nodes = []
             output += "\n"
+            pad = pad[:-1]
+            first = True
         return output
 
     def insert(self, hwnd):
