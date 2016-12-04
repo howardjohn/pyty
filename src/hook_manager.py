@@ -33,7 +33,9 @@ class HookManager():
         ghk.register(ghk.VK_E, MOD, win_manager.exit)
 
         ghk.register(ghk.VK_OEM_PLUS, MOD, win_manager.insert)
+        ghk.register(ghk.VK_OEM_PLUS, ALTMOD, win_manager.insert_all)
         ghk.register(ghk.VK_OEM_MINUS, MOD, win_manager.remove)
+        ghk.register(ghk.VK_OEM_MINUS, ALTMOD, win_manager.remove_all)
 
         # start looking for hotkey.
         ghk.listen()

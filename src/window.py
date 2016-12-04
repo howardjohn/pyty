@@ -28,7 +28,7 @@ class Window:
     def move(self, rect):
         """Moves the window the specified location and dimensions.
         """
-        window_api.move_window(self.hwnd, (rect.x, rect.y), (rect.w, rect.h))
+        window_api.move_window(self.hwnd, rect)
 
     def teardown_window(self):
         """Resets the window to original qualities.

@@ -24,9 +24,6 @@ class WindowManager:
         self.desktop = Desktop(width, height)
         self.gap = gap
 
-        # TODO option to add all on run
-        for window in window_api.get_all_windows():
-            self.desktop.insert(window)
 
     def increase_gaps(self):
         """Increase gap size.
@@ -89,8 +86,19 @@ class WindowManager:
         focused = window_api.get_foreground_window()
         self.desktop.insert(focused)
 
+    def insert_all(self):
+        """Tells desktop to insert all windows.
+        """
+        for window in window_api.get_all_windows():
+            self.desktop.insert(window)
+
     def remove(self):
         """Tells desktop to remove focused window.
         """
         focused = window_api.get_foreground_window()
         # TODO implement desktop.remove
+
+    def remove_all(self):
+        """Tells desktop to remove all windows.
+        """
+        # TODO implement desktop.remove_all

@@ -104,16 +104,16 @@ def get_text(hwnd):
     return ''.join(char for char in wg.GetWindowText(hwnd) if ord(char) <= 126)
 
 
-def move_window(hwnd, loc, size):
+def move_window(hwnd, rect):
     """Moves window.
 
     Args:
-        loc: (x,y) of new location
+        rect: (x,y, w, h) of new location
         size: (width, height) of new location
     """
     BORDER_WIDTH = 7  # Windows 10 has an invisible 8px border
-    wg.MoveWindow(hwnd, int(loc[0]) - BORDER_WIDTH, int(loc[1]),
-                  int(size[0]) + 2 * BORDER_WIDTH, int(size[1]) + BORDER_WIDTH,
+    wg.MoveWindow(hwnd, int(rect.x) - BORDER_WIDTH, int(rect.y),
+                  int(rect.w) + 2 * BORDER_WIDTH, int(rect.h) + BORDER_WIDTH,
                   True)
 
 
