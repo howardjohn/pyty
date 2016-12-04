@@ -65,12 +65,16 @@ class WindowManager:
         hwnd = window_api.get_foreground_window()
         node = self.find_node(hwnd, self.desktop.root)
 
-        if node:
-            if node.parent:
-                node.parent.split = node.parent.split.swap()
-            else:
-                node.split = node.split.swap()
+        if node is not None:
+            self.swap_split_recurse(node.parent)
+
         self.desktop.update_all(self.desktop.root)
+
+    def swap_split_recurse(self, node):
+        if node is not None:
+            node.split = node.split.swap()
+            self.swap_split_recurse(node.first)
+            self.swap_split_recurse(node.second)
 
     def exit(self):
         """Tears down all windows and exits.

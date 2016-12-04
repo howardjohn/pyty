@@ -41,15 +41,14 @@ class Node:
         self.set_split()
         self.set_rect()
         if self.rect != old_rect and self.window is not None:
-            gap = 6 # TODO: gap should be taken from window_manager
+            gap = 6  # TODO: gap should be taken from window_manager
             self.window.move(self.rect, gap)
 
     def set_split(self):
         """Updates the node's split if it is None to be opposite of parents.
         """
         if self.split is None:
-            self.split = self.parent.split.swap() if self.parent is not None \
-                else Split.horz
+            self.split = self.parent.split.swap() if self.parent is not None else Split.vert
 
     def set_rect(self):
         """Updates the node's rect. Based on parent.
