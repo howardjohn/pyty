@@ -66,7 +66,6 @@ class GlobalHotkeys():
 
                 self.user32.TranslateMessage(ctypes.byref(msg))
                 self.user32.DispatchMessageA(ctypes.byref(msg))
-
         finally:
             for index, (vk, modifiers, func, kwargs) in enumerate(self.key_mapping):
                 self.user32.UnregisterHotKey(None, index)

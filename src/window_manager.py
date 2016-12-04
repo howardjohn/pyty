@@ -4,6 +4,14 @@ from desktop import Desktop
 import sys
 
 
+def constrain(n, low=0, high=1):
+    if n < low:
+        return low
+    elif n > high:
+        return high
+    return n
+
+
 class WindowManager:
     """Initializes, keeps track of, and calls functions to modify windows.
     """
@@ -22,41 +30,22 @@ class WindowManager:
         self.desktop = Desktop(width, height)
         self.gap = gap
 
-    def increase_gaps(self):
-        """Increase gap size.
+    def change_gaps(self, delta):
+        """Changes gap size by delta.
         """
-        self.gap += 2
+        self.gap = max(self.gap + delta, 0)
         self.desktop.update_all(self.desktop.root)
 
-    def decrease_gaps(self):
-        """Decrease gap size.
-        """
-        if self.gap >= 2:
-            self.gap = max(self.gap - 2, 0)
-            self.desktop.update_all(self.desktop.root)
-
-    def increase_ratio(self):
+    def change_ratio(self, delta):
         """Change ratio of parent window to expand focused window.
         """
         hwnd = window_api.get_foreground_window()
         node = self.find_node(hwnd, self.desktop.root)
-        if node.parent is not None:
-            if node.is_first_child():
-                node.parent.ratio = min(node.parent.ratio + .1, 1)
-            else:
-                node.parent.ratio = max(node.parent.ratio - .1, 0)
-            self.desktop.update_all(self.desktop.root)
+        if node.is_second_child():
+            delta = -delta
 
-    def decrease_ratio(self):
-        """Change ratio of parent window to shrink focused window.
-        """
-        hwnd = window_api.get_foreground_window()
-        node = self.find_node(hwnd, self.desktop.root)
         if node.parent is not None:
-            if node.is_first_child():
-                node.parent.ratio = min(node.parent.ratio - .1, 1)
-            else:
-                node.parent.ratio = max(node.parent.ratio + .1, 0)
+            node.parent.ratio = constrain(node.parent.ratio + delta, 0, 1)
             self.desktop.update_all(self.desktop.root)
 
     def swap_split(self):

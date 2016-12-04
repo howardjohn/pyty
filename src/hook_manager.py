@@ -21,11 +21,11 @@ class HookManager():
         MOD = ghk.MOD_WIN | ghk.MOD_SHIFT
         ALTMOD = MOD | ghk.MOD_ALT
 
-        ghk.register(ghk.VK_G, MOD, win_manager.increase_gaps)
-        ghk.register(ghk.VK_G, ALTMOD, win_manager.decrease_gaps)
+        ghk.register(ghk.VK_G, MOD, win_manager.change_gaps, delta=2)
+        ghk.register(ghk.VK_G, ALTMOD, win_manager.change_gaps, delta=-2)
 
-        ghk.register(ghk.VK_R, MOD, win_manager.increase_ratio)
-        ghk.register(ghk.VK_R, ALTMOD, win_manager.decrease_ratio)
+        ghk.register(ghk.VK_R, MOD, win_manager.change_ratio, delta=.1)
+        ghk.register(ghk.VK_R, ALTMOD, win_manager.change_ratio, delta=-.1)
 
         ghk.register(ghk.VK_S, MOD, win_manager.swap_split)
         ghk.register(ghk.VK_E, MOD, win_manager.exit)

@@ -112,7 +112,7 @@ def move_window(hwnd, rect, gap=0, border=True):
         rect: (x,y, w, h) of new location
         gap: number of pixels between each window
     """
-    BORDER_WIDTH = 7 if border else 0 # Windows 10 has an invisible 8px border
+    BORDER_WIDTH = 7 if border else 0  # Windows 10 has an invisible 8px border
     x = int(rect.x) - BORDER_WIDTH + gap // 2
     y = int(rect.y) + gap // 2
     w = int(rect.w) + 2 * BORDER_WIDTH - gap
@@ -147,6 +147,7 @@ def add_titlebar(hwnd):
     maximize(hwnd)
     restore(hwnd)
 
+
 def remove_titlebar(hwnd):
     """Sets window style to caption (no titlebar).
     """
@@ -155,6 +156,7 @@ def remove_titlebar(hwnd):
     wg.SetWindowLong(hwnd, wc.GWL_STYLE, style)
     maximize(hwnd)
     restore(hwnd)
+
 
 def get_window_rect(hwnd):
     """Returns the windows dimensions in the form Rect(x, y, w, h).
