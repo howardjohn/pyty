@@ -19,8 +19,6 @@ class WindowManager:
         """
         width, height = window_api.get_screen_resolution()
 
-        # TODO add multi-desktop support
-        # TODO consider desktop manipulating windows.
         self.desktop = Desktop(width, height)
         self.gap = gap
 
@@ -33,14 +31,39 @@ class WindowManager:
     def decrease_gaps(self):
         """Decrease gap size.
         """
-        self.gap = max(self.gap - 2, 0)
-        self.desktop.update_all(self.desktop.root)
+        if self.gap >= 2:
+            self.gap = max(self.gap - 2, 0)
+            self.desktop.update_all(self.desktop.root)
+
+    def increase_ratio(self):
+        """Change ratio of parent window to expand focused window.
+        """
+        hwnd = window_api.get_foreground_window()
+        node = self.find_node(hwnd, self.desktop.root)
+        if node.parent is not None:
+            if node.is_first_child():
+                node.parent.ratio = min(node.parent.ratio + .1, 1)
+            else:
+                node.parent.ratio = max(node.parent.ratio - .1, 0)
+            self.desktop.update_all(self.desktop.root)
+
+    def decrease_ratio(self):
+        """Change ratio of parent window to shrink focused window.
+        """
+        hwnd = window_api.get_foreground_window()
+        node = self.find_node(hwnd, self.desktop.root)
+        if node.parent is not None:
+            if node.is_first_child():
+                node.parent.ratio = min(node.parent.ratio - .1, 1)
+            else:
+                node.parent.ratio = max(node.parent.ratio + .1, 0)
+            self.desktop.update_all(self.desktop.root)
 
     def swap_split(self):
         """Swap split type on focused window.
         """
         hwnd = window_api.get_foreground_window()
-        node = self.findNode(hwnd, self.desktop.root)
+        node = self.find_node(hwnd, self.desktop.root)
 
         if node:
             if node.parent:
@@ -68,7 +91,8 @@ class WindowManager:
         self.teardown(node.first)
         self.teardown(node.second)
 
-    def findNode(self, hwnd, node):
+    # todo default node to root
+    def find_node(self, hwnd, node):
         """Searches through all nodes for the given hwnd.
         If not found, returns None.
         """
@@ -76,7 +100,7 @@ class WindowManager:
             return None
         if node.window and node.window.hwnd == hwnd:
             return node
-        return self.findNode(hwnd, node.first) or self.findNode(hwnd, node.second)
+        return self.find_node(hwnd, node.first) or self.find_node(hwnd, node.second)
 
     def insert(self, hwnd=None):
         """Tells desktop to insert given window, or focused window if none.
@@ -85,7 +109,7 @@ class WindowManager:
             hwnd = window_api.get_foreground_window()
 
         # Window already inserted
-        if self.findNode(hwnd, self.desktop.root) is not None:
+        if self.find_node(hwnd, self.desktop.root) is not None:
             return
 
         self.desktop.insert(hwnd)

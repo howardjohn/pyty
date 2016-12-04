@@ -26,7 +26,6 @@ class Desktop:
     def __str__(self):
         """Prints out full tree representation
         """
-        # TODO Spacing on print
         current_nodes = [self.root]
         next_nodes = []
         output = ""

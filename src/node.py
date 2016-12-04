@@ -27,7 +27,6 @@ class Node:
         self.rect = None
         self.split = None
 
-        # TODO changeable ratio
         self.ratio = .5
 
     def update(self):
@@ -62,16 +61,17 @@ class Node:
                          self.parent.rect.y,
                          self.parent.rect.w,
                          self.parent.rect.h)
-        # TODO: gap
+
+        ratio = self.parent.ratio if self.is_first_child() else 1 - self.parent.ratio
 
         if self.parent.split == Split.horz:
             if not self.is_first_child():
-                self.rect.y += self.parent.rect.h * self.parent.ratio
-            self.rect.h *= self.parent.ratio
+                self.rect.y += self.parent.rect.h * (1 - ratio)
+            self.rect.h *= ratio
         elif self.parent.split == Split.vert:
             if not self.is_first_child():
-                self.rect.x += self.parent.rect.w * self.parent.ratio
-            self.rect.w *= self.parent.ratio
+                self.rect.x += self.parent.rect.w * (1 - ratio)
+            self.rect.w *= ratio
 
     def __str__(self):
         """Returns a string representation of the Node.

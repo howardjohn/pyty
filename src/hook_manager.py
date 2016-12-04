@@ -21,9 +21,11 @@ class HookManager():
         MOD = ghk.MOD_WIN | ghk.MOD_SHIFT
         ALTMOD = MOD | ghk.MOD_ALT
 
-        # Add hotkeys
         ghk.register(ghk.VK_G, MOD, win_manager.increase_gaps)
         ghk.register(ghk.VK_G, ALTMOD, win_manager.decrease_gaps)
+
+        ghk.register(ghk.VK_R, MOD, win_manager.increase_ratio)
+        ghk.register(ghk.VK_R, ALTMOD, win_manager.decrease_ratio)
 
         ghk.register(ghk.VK_S, MOD, win_manager.swap_split)
         ghk.register(ghk.VK_E, MOD, win_manager.exit)
@@ -33,5 +35,4 @@ class HookManager():
         ghk.register(ghk.VK_OEM_MINUS, MOD, win_manager.remove)
         ghk.register(ghk.VK_OEM_MINUS, ALTMOD, win_manager.remove_all)
 
-        # start looking for hotkey.
         ghk.listen()
