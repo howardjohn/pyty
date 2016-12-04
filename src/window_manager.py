@@ -52,7 +52,6 @@ class WindowManager:
     def exit(self):
         """Tears down all windows and exits.
         """
-        # TODO: save original state and restore after
         self.teardown(self.desktop.root)
 
         sys.exit(0)

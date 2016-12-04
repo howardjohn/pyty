@@ -24,15 +24,16 @@ class Window:
         window_api.remove_titlebar(self.hwnd)
         window_api.focus_window(self.hwnd)
 
-    def move(self, rect):
+    def move(self, rect, gap=0):
         """Moves the window the specified location and dimensions.
         """
-        window_api.move_window(self.hwnd, rect)
+        window_api.move_window(self.hwnd, rect, gap)
 
     def teardown_window(self):
         """Resets the window to original qualities.
         """
         window_api.add_titlebar(self.hwnd)
+        # TODO Retain states of windows (maximized, minimized?)
         self.move(self.original_rect)
 
     def get_rect(self):

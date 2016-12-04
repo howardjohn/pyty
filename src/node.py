@@ -27,7 +27,7 @@ class Node:
         self.rect = None
         self.split = None
 
-        # TODO change ratio
+        # TODO changeable ratio
         self.ratio = .5
 
     def update(self):
@@ -42,7 +42,8 @@ class Node:
         self.set_split()
         self.set_rect()
         if self.rect != old_rect and self.window is not None:
-            self.window.move(self.rect)
+            gap = 2 # TODO: gap should be taken from window_manager
+            self.window.move(self.rect, gap)
 
     def set_split(self):
         """Updates the node's split if it is None to be opposite of parents.
