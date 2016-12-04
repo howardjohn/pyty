@@ -105,18 +105,18 @@ def get_text(hwnd):
     return ''.join(char for char in wg.GetWindowText(hwnd) if ord(char) <= 126)
 
 
-def move_window(hwnd, rect, gap=0):
+def move_window(hwnd, rect, gap=0, border=True):
     """Moves window.
 
     Args:
         rect: (x,y, w, h) of new location
-        size: (width, height) of new location
+        gap: number of pixels between each window
     """
-    BORDER_WIDTH = 7  # Windows 10 has an invisible 8px border
-    x = int(rect.x) - BORDER_WIDTH + gap
-    y = int(rect.y) + gap
-    w = int(rect.w) + 2 * BORDER_WIDTH - 2 * gap
-    h = int(rect.h) + BORDER_WIDTH - 2 * gap      # No hidden border on top
+    BORDER_WIDTH = 7 if border else 0 # Windows 10 has an invisible 8px border
+    x = int(rect.x) - BORDER_WIDTH + gap // 2
+    y = int(rect.y) + gap // 2
+    w = int(rect.w) + 2 * BORDER_WIDTH - gap
+    h = int(rect.h) + BORDER_WIDTH - gap      # No hidden border on top
     wg.MoveWindow(hwnd, x, y, w, h, True)
 
 
@@ -144,8 +144,6 @@ def add_titlebar(hwnd):
     style = wg.GetWindowLong(hwnd, wc.GWL_STYLE)
     style |= wc.WS_CAPTION
     wg.SetWindowLong(hwnd, wc.GWL_STYLE, style)
-    maximize(hwnd)
-    restore(hwnd)
 
 
 def remove_titlebar(hwnd):
@@ -155,8 +153,6 @@ def remove_titlebar(hwnd):
     style = wg.GetWindowLong(hwnd, wc.GWL_STYLE)
     style &= ~wc.WS_CAPTION
     wg.SetWindowLong(hwnd, wc.GWL_STYLE, style)
-    maximize(hwnd)
-    restore(hwnd)
 
 
 def get_window_rect(hwnd):

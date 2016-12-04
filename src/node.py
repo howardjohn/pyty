@@ -42,7 +42,7 @@ class Node:
         self.set_split()
         self.set_rect()
         if self.rect != old_rect and self.window is not None:
-            gap = 2 # TODO: gap should be taken from window_manager
+            gap = 6 # TODO: gap should be taken from window_manager
             self.window.move(self.rect, gap)
 
     def set_split(self):

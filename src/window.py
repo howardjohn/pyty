@@ -20,21 +20,19 @@ class Window:
     def setup_window(self):
         """Restores a window and removes its border.
         """
-        window_api.restore(self.hwnd)
         window_api.remove_titlebar(self.hwnd)
         window_api.focus_window(self.hwnd)
 
-    def move(self, rect, gap=0):
+    def move(self, rect, gap, border=True):
         """Moves the window the specified location and dimensions.
         """
-        window_api.move_window(self.hwnd, rect, gap)
+        window_api.move_window(self.hwnd, rect, gap, border)
 
     def teardown_window(self):
         """Resets the window to original qualities.
         """
         window_api.add_titlebar(self.hwnd)
-        # TODO Retain states of windows (maximized, minimized?)
-        self.move(self.original_rect)
+        self.move(self.original_rect, 0, False)
 
     def get_rect(self):
         return window_api.get_window_rect(self.hwnd)
