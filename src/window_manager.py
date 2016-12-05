@@ -67,7 +67,7 @@ class WindowManager:
 
     def change_focus(self, dir):
         """
-        Changes focused window based on relation in tree.
+        Moves window focus based on relation in tree.
 
         Args:
             dir (Dir): Determines change direction.
@@ -76,7 +76,7 @@ class WindowManager:
         node = self.get_focused_node()
 
         # parent can never be None because then there would be one window only
-        if node is None and node.parent is not None:
+        if node is None or node.parent is None:
             return
 
         focus = None
@@ -92,6 +92,54 @@ class WindowManager:
                 focus = focus.first
         if focus is not None and focus.window is not None:
             window_api.focus_window(focus.window.hwnd)
+
+    def swap_window(self, dir):
+        """
+        Swaps currently focused window with another window based on relation in tree.
+
+        Args:
+            dir (Dir): Determines change direction.
+                - Up swaps parent, down swaps child (if any) or sibling
+        """
+        node = self.get_focused_node()
+
+        # parent can never be None because then there would be one window only
+        if node is None or node.parent is None:
+            return
+
+        swap = None
+        if dir == Dir.up:
+            if node.parent.parent is not None:
+                swap = node.parent.parent.first
+        elif dir == Dir.down:
+            if node.is_first_child():
+                swap = node.parent.second
+            else:
+                swap = node.parent.first
+            while swap.window is None:
+                swap = swap.first
+        if swap is not None and swap.window is not None:
+            old_parent = swap.parent
+            old_first = swap.first
+            old_second = swap.second
+            old_is_first = swap.is_first_child()
+
+            swap.parent = node.parent
+            swap.first = node.first
+            swap.second = node.second
+            if node.is_first_child():
+                node.parent.first = swap
+            else:
+                node.parent.second = swap
+                
+            node.parent = old_parent
+            node.first = old_first
+            node.second = old_second
+            if old_is_first:
+                old_parent.first = node
+            else:
+                old_parent.second = node
+            self.desktop.update_all(self.desktop.root)
 
     def swap_split(self):
         """

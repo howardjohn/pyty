@@ -89,9 +89,9 @@ class Node:
             (string): Representation of the Node.
         """
         if self.window:
-            return '[*Node*,h:{0}]'.format(self.window.hwnd)
+            return '[*{0}*]'.format(self.window.hwnd)
         else:
-            return '[Internal,p:{0}]'.format(self.parent)
+            return '[Internal]'
 
     def is_first_child(self):
         """
