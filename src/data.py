@@ -1,23 +1,28 @@
-"""Stores data structures"""
+"""Stores data structures."""
 from enum import Enum
 from namedlist import namedlist
 
 
 class Split(Enum):
-    """Enum containing information of how the window is split:
+    """
+    Enum containing information of how the window is split:
     horizontally or vertically.
     """
     vert = 0
     horz = 1
 
     def swap(self):
-        """Returns the opposite split.
+        """Gets the opposite split.
+
+        Returns:
+            (Split): the split opposite of the current split.
         """
         return Split((self.value + 1) % 2)
 
 
 class Dir(Enum):
-    """Enum containing information of how the direction in 4 ways.
+    """
+    Enum containing information of how the direction in 4 ways.
     """
     up = 0
     right = 1

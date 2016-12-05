@@ -9,15 +9,25 @@ from data import Rect
 
 
 def get_screen_resolution():
-    """Returns the screen resolution in pixels (width, height)."""
+    """
+    Fetches the screen resolution in pixels.
+
+    Returns:
+        (int, int): (width, height) in pixels of screen size.
+    """
     return wa.GetSystemMetrics(0), wa.GetSystemMetrics(1)
 
 
 def is_real_window(hwnd):
-    """Returns True if the hwnd is a visible window.
-    http://stackoverflow.com/a/7292674/238472
-    and https://github.com/Answeror/lit/blob/master/windows.py for details.
     """
+    Determines if the hwnd is a visible window.
+    Args:
+        hwnd (int): The window handler.
+    Returns:
+        (bool): True if real window, else False.
+    """
+# http://stackoverflow.com/a/7292674/238472
+# and https://github.com/Answeror/lit/blob/master/windows.py for details.
 
     class TITLEBARINFO(ctypes.Structure):
         """ctype Structure for TITLEBARINFO"""
@@ -79,18 +89,21 @@ def is_real_window(hwnd):
     if pwi.dwExStyle & wc.WS_EX_NOACTIVATE:
         return False
 
-    if get_text(hwnd) == "":
-        print("WARNING: NO TEXT WINDOW: %s" % hwnd)
-        return False
-
     return True
 
 
 def get_all_windows():
-    """Returns the hwnd of all 'real' windows."""
+    """
+    Generates list of the hwnd of all 'real' windows.
+
+    Returns:
+        (bool): List of hwnd of real windows.
+    """
     def call(hwnd, param):
-        """The callback function for EnumWindows.
-        Appends all hwnds to param list"""
+        """
+        The callback function to be used by EnumWindows.
+        Appends all hwnds to param list
+        """
         if is_real_window(hwnd):
             param.append(hwnd)
 
@@ -100,46 +113,72 @@ def get_all_windows():
 
 
 def get_text(hwnd):
-    """Returns the titlebar text of a window (only standard ascii).
+    """
+    Gets the titlebar text of a window (only standard ascii).
+
+    Args:
+        hwnd (int): The window handler.
+    Returns:
+        (string): The titlebar text of the window.
     """
     return ''.join(char for char in wg.GetWindowText(hwnd) if ord(char) <= 126)
 
 
 def move_window(hwnd, rect, gap=0, border=True):
-    """Moves window.
+    """
+    Moves window.
 
     Args:
-        rect: (x,y, w, h) of new location
-        gap: number of pixels between each window
+        hwnd (int): The window handler.
+        rect: Rect(x, y, w, h) of new location.
+    Kwargs:
+        gap (int): Number of pixels between each window.
+        border (bool): Should invisible border should be accounted for.
     """
     BORDER_WIDTH = 7 if border else 0  # Windows 10 has an invisible 8px border
     x = int(rect.x) - BORDER_WIDTH + gap // 2
     y = int(rect.y) + gap // 2
     w = int(rect.w) + 2 * BORDER_WIDTH - gap
-    h = int(rect.h) + BORDER_WIDTH - gap      # No hidden border on top
+    h = int(rect.h) + BORDER_WIDTH - gap  # No hidden border on top
     wg.MoveWindow(hwnd, x, y, w, h, True)
 
 
 def restore(hwnd):
-    """Restores (unmaximizes) the window.
+    """
+    Restores (unmaximizes) the window.
+
+    Args:
+        hwnd (int): The window handler.
     """
     wg.ShowWindow(hwnd, wc.SW_RESTORE)
 
 
 def maximize(hwnd):
-    """Maximizes the window.
+    """
+    Maximizes the window.
+
+    Args:
+        hwnd (int): The window handler.
     """
     wg.ShowWindow(hwnd, wc.SW_MAXIMIZE)
 
 
 def get_foreground_window():
-    """Returns the currently focused window's hwnd.
+    """
+    Returns the currently focused window's hwnd.
+
+    Returns:
+        (int): The focused window's window handler.
     """
     return wg.GetForegroundWindow()
 
 
 def add_titlebar(hwnd):
-    """Sets the window style to include a titlebar if it doesn't have one.
+    """
+    Sets the window style to include a titlebar if it doesn't have one.
+
+    Args:
+        hwnd (int): The window handler.
     """
     style = wg.GetWindowLong(hwnd, wc.GWL_STYLE)
     style |= wc.WS_CAPTION
@@ -149,7 +188,11 @@ def add_titlebar(hwnd):
 
 
 def remove_titlebar(hwnd):
-    """Sets window style to caption (no titlebar).
+    """
+    Sets window style to caption (no titlebar).
+
+    Args:
+        hwnd (int): The window handler.
     """
     style = wg.GetWindowLong(hwnd, wc.GWL_STYLE)
     style &= ~wc.WS_CAPTION
@@ -159,12 +202,24 @@ def remove_titlebar(hwnd):
 
 
 def get_window_rect(hwnd):
-    """Returns the windows dimensions in the form Rect(x, y, w, h).
+    """
+    Gets the window's dimensions in the form Rect(x, y, w, h).
+
+    Args:
+        hwnd (int): The window handler.
+    Returns:
+        (Rect(x, y, w, h)): The dimensions of the window.
     """
     rect = wg.GetWindowRect(hwnd)
     return Rect(rect[0], rect[1], rect[2] - rect[0], rect[3] - rect[1])
 
 
 def focus_window(hwnd):
+    """
+    Focuses the given window.
+
+    Args:
+        hwnd (int): The window handler.
+    """
     wg.ShowWindow(hwnd, wc.SW_SHOW)
     wg.SetForegroundWindow(hwnd)

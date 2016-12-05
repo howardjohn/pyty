@@ -5,26 +5,33 @@ from window import Window
 
 
 class Desktop:
-    """Desktop holds the root nodes and provides methods to switch between these.
+    """
+    Desktop holds the root nodes and provides methods to switch between these.
 
     Attributes:
-        roots: Root nodes holding all nodes.
+        roots (Node): Root nodes holding all nodes.
+        focus (Node): Insertion point for new nodes.
+        size (Size(w, h)): The desktop's size.
     """
 
     def __init__(self, width, height):
-        """Initializes the Desktop class.
+        """
+        Initializes the Desktop class.
 
         Args:
-            width: width of the desktop.
-            height: height of the desktop.
-            hwnds: all hwnds detected.
+            width (int): The width of the desktop.
+            height (int): The height of the desktop.
         """
         self.root = None
         self.focus = None
         self.size = Size(width, height)
 
     def __str__(self):
-        """Prints out full tree representation
+        """
+        Prints out full tree representation.
+
+        Returns:
+            (string): String representation of tree
         """
         current_nodes = [self.root]
         next_nodes = []
@@ -37,7 +44,7 @@ class Desktop:
                 if not first:
                     output += " | "
                 first = False
-                output += str(node.rect if node else "NA")
+                output += str(node if node else "NA")
                 if node:
                     next_nodes.append(node.first)
                     next_nodes.append(node.second)
@@ -49,6 +56,12 @@ class Desktop:
         return output
 
     def insert(self, hwnd):
+        """
+        Inserts given window into the tree.
+
+        Args:
+            hwnd (int): The window handler to insert.
+        """
         leaf_node = Node(Window(hwnd))
         internal_node = Node()
         if self.focus is None:
@@ -76,10 +89,16 @@ class Desktop:
 
         self.update_all(self.root)
 
-    def update_all(self, current):
-        if current is None:
+    def update_all(self, node):
+        """
+        Tells window to update itself, and tells children to do so aswell.
+
+        Args:
+            node (Node): Currently updating node.
+        """
+        if node is None:
             return
 
-        current.update()
-        self.update_all(current.first)
-        self.update_all(current.second)
+        node.update()
+        self.update_all(node.first)
+        self.update_all(node.second)

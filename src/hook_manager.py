@@ -1,17 +1,19 @@
-"""Manages hotkeys"""
+"""Manages hotkeys."""
 from global_hotkeys import GlobalHotkeys as ghk
 from data import Dir
 
+
 class HookManager():
-    """Registers hotkeys and calls WindowManager functions when pressed.
+    """
+    Defines and registers all hotkeys.
 
     Attributes:
-        hot: Stores and starts monitoring hotkeys
-        win_manager: The window manager
+        win_manager (WindowManager): The window manager.
     """
 
     def __init__(self, win_manager):
-        """Initializes the hook manager given a WindowManager
+        """
+        Initializes the hook manager given a WindowManager
 
         Args:
             win_manager (WindowManager): Description

@@ -1,15 +1,16 @@
+"""Stores and registers hotkey hooks."""
 import ctypes
 import ctypes.wintypes
 import win32con
 
-# Created by
+# Code adopted from:
 # http://makble.com/python-win32-programming-example-register-hotkey-and-switching-tab
 
 
 class GlobalHotkeys():
     """
-    Register a key using the register() method, or using the decorator
-    Use listen() to start the message pump
+    Registers a key using the register() method or the decorator.
+    Uses listen() to start the message pump.
     """
 
     key_mapping = []
@@ -24,14 +25,15 @@ class GlobalHotkeys():
     @classmethod
     def register(self, vk, modifier=0, func=None, **kwargs):
         """
-        vk is a windows virtual key code
-         - can use ord('X') for A-Z, and 0-1 (note uppercase letter only)
-         - or win32con.VK_* constants
-         - full list: http://msdn.microsoft.com/en-us/library/dd375731.aspx
-
-        modifier is a win32con.MOD_* constant
-
-        func is the function to run.
+        Args:
+            vk (int): The windows virtual key code to register
+                 - can use ord('X') for A-Z, and 0-1 (note uppercase letter only)
+                 - or win32con.VK_* constants
+                 - full list: http://msdn.microsoft.com/en-us/library/dd375731.aspx
+        Kwargs:
+            modifier (int): The key modifier (a win32con.MOD_* constant).
+            func (function): The function to run on keypress.
+            kwargs: Kwargs to pass into func.
         """
 
         # Called as a decorator?
@@ -59,7 +61,8 @@ class GlobalHotkeys():
             msg = ctypes.wintypes.MSG()
             while self.user32.GetMessageA(ctypes.byref(msg), None, 0, 0) != 0:
                 if msg.message == win32con.WM_HOTKEY:
-                    (vk, modifiers, func, kwargs) = self.key_mapping[msg.wParam]
+                    (vk, modifiers, func, kwargs) = self.key_mapping[
+                        msg.wParam]
                     if not func:
                         break
                     func(**kwargs)
@@ -72,6 +75,9 @@ class GlobalHotkeys():
 
     @classmethod
     def _include_defined_vks(self):
+        """
+        Includes all VK codes defined by win32con.
+        """
         for item in win32con.__dict__:
             item = str(item)
             if item[:3] == 'VK_':
@@ -79,12 +85,18 @@ class GlobalHotkeys():
 
     @classmethod
     def _include_alpha_numeric_vks(self):
+        """
+        Includes A-Z and 0-9 VK codes.
+        """
         for key_code in (list(range(ord('A'), ord('Z') + 1)) +
                          list(range(ord('0'), ord('9') + 1))):
             setattr(self, 'VK_' + chr(key_code), key_code)
 
     @classmethod
     def _include_custom_vks(self):
+        """
+        Includes VK codes missing from win32con.
+        """
         setattr(self, 'VK_OEM_PLUS', 0xBB)
         setattr(self, 'VK_OEM_MINUS', 0xBD)
 

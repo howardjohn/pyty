@@ -1,22 +1,28 @@
-"""Stores the Node class"""
+"""Stores the Node class."""
 from data import Split, Rect
 
 
 class Node:
-    """Stores all information on a window.
+    """
+    Stores all information on a window.
 
     Attributes:
-        children (list): holds all childen Nodes.
-        parent (Node): parent Node.
-        window (Window): the window held by this Node.
+        parent (Node): The parent Node.
+        window (Window): The window held by this Node.
+        first (Node): The first child.
+        second (Node): The second child.
         split (Split): Direction node is split for children.
         rect (Rect): x, y, w, h coordinates of window
         ratio (int): ratio of split for children.
     """
 
-    def __init__(self, window=None, parent=None, rootSize=None):
-        """Initializes the node. Tells the parent this is a child.
-        Calculates the type of split.
+    def __init__(self, window=None, parent=None):
+        """
+        Initializes the node.
+
+        Args:
+            parent (Node): The parent Node.
+            window (Window): The window held by this Node.
         """
         self.parent = parent
         self.window = window
@@ -30,8 +36,9 @@ class Node:
         self.ratio = .5
 
     def update(self):
-        """Updates a window by setting new split and rect.
-            IF the rect has changed, then the window will move.
+        """
+        Updates a window by setting new split and rect.
+        Only if the rect has changed will the the window move.
         """
         if self.window is not None:
             old_rect = self.window.get_rect()
@@ -45,13 +52,15 @@ class Node:
             self.window.move(self.rect, gap)
 
     def set_split(self):
-        """Updates the node's split if it is None to be opposite of parents.
+        """
+        Sets the node's split if is not set to be opposite of parents.
         """
         if self.split is None:
             self.split = self.parent.split.swap() if self.parent is not None else Split.vert
 
     def set_rect(self):
-        """Updates the node's rect. Based on parent.
+        """
+        Updates the node's rect based on parent.
         """
         if self.parent is None:
             return self.rect
@@ -73,7 +82,11 @@ class Node:
             self.rect.w *= ratio
 
     def __str__(self):
-        """Returns a string representation of the Node.
+        """
+        Gets the string representation of the Node.
+
+        Returns:
+            (string): Representation of the Node.
         """
         if self.window:
             return '[*Node*,h:{0}]'.format(self.window.hwnd)
@@ -81,16 +94,19 @@ class Node:
             return '[Internal,p:{0}]'.format(self.parent)
 
     def is_first_child(self):
-        """Returns if the node is the first child of its parent.
+        """
+        Checks if the node is the first child of its parent.
+
+        Returns:
+            (bool): True if is first child, else False.
         """
         return self.parent is not None and self.parent.first == self
 
     def is_second_child(self):
-        """Returns if the node is the second child of its parent.
+        """
+        Checks if the node is the second child of its parent.
+
+        Returns:
+            (bool): True if is second child, else False.
         """
         return self.parent is not None and self.parent.second == self
-
-    def is_leaf(self):
-        """Returns if the node is a leaf node.
-        """
-        return self.first is None or self.second is None

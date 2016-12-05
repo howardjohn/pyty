@@ -1,0 +1,3 @@
+namedlist==1.7
+pywin32==220.1
+

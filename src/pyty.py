@@ -1,4 +1,4 @@
-"""Initializes the pyty"""
+"""Initializes PyTy."""
 from window_manager import WindowManager
 from hook_manager import HookManager
 import traceback

@@ -6,6 +6,10 @@ from data import Dir
 
 
 def constrain(n, low=0, high=1):
+    """
+    Helper function to ensure value is between low and high.
+    If not, limit to low/high.
+    """
     if n < low:
         return low
     elif n > high:
@@ -14,17 +18,20 @@ def constrain(n, low=0, high=1):
 
 
 class WindowManager:
-    """Initializes, keeps track of, and calls functions to modify windows.
+    """
+    Calls functions to modify windows and stores desktop.
+
+    Attributes:
+        desktop (Desktop): The desktop object.
+        gap (int): The gap between windows.
     """
 
     def __init__(self, gap=6):
-        """Initializes the WM and makes a desktop.
+        """
+        Initializes the WM and makes a desktop.
 
-        Args:
-            gap (int, optional): The gap between windows
-
-        Attributes:
-            desktop (Desktop): Stores the desktop object.
+        Kwargs:
+            gap (int): The gap between windows.
         """
         width, height = window_api.get_screen_resolution()
 
@@ -32,15 +39,25 @@ class WindowManager:
         self.gap = gap
 
     def change_gaps(self, delta):
-        """Changes gap size by delta.
+        """
+        Changes gap size by delta.
+
+        Args:
+            delta (int): Amount of pixels to change gap by.
         """
         self.gap = max(self.gap + delta, 0)
         self.desktop.update_all(self.desktop.root)
 
     def change_ratio(self, delta):
-        """Change ratio of parent window to expand focused window.
+        """
+        Changes ratio amount of focused window by delta.
+
+        Args:
+            delta (int): Amount of pixels to change ratio by.
         """
         node = self.get_focused_node()
+
+        # A positive delta would make the window smaller
         if node.is_second_child():
             delta = -delta
 
@@ -49,13 +66,17 @@ class WindowManager:
             self.desktop.update_all(self.desktop.root)
 
     def change_focus(self, dir):
-        """Changes focused window based on relation in tree.
-        Up focuses parent, down focuses child (if any) or sibling
+        """
+        Changes focused window based on relation in tree.
+
+        Args:
+            dir (Dir): Determines change direction.
+                - Up focuses parent, down focuses child (if any) or sibling
         """
         node = self.get_focused_node()
 
         # parent can never be None because then there would be one window only
-        if node is None and none.parent is not None:
+        if node is None and node.parent is not None:
             return
 
         focus = None
@@ -73,7 +94,8 @@ class WindowManager:
             window_api.focus_window(focus.window.hwnd)
 
     def swap_split(self):
-        """Swap split type on focused window.
+        """
+        Swap split type on focused window.
         """
         node = self.get_focused_node()
 
@@ -83,20 +105,31 @@ class WindowManager:
         self.desktop.update_all(self.desktop.root)
 
     def swap_split_recurse(self, node):
+        """
+        Helper function for swap_split.
+
+        Args:
+            node (Node): The current node to swap split.
+        """
         if node is not None:
             node.split = node.split.swap()
             self.swap_split_recurse(node.first)
             self.swap_split_recurse(node.second)
 
     def exit(self):
-        """Tears down all windows and exits.
+        """
+        Tears down all windows and exits.
         """
         self.teardown(self.desktop.root)
 
         sys.exit(0)
 
     def teardown(self, node):
-        """Tells a node to teardown its window and tells its children to.
+        """
+        Tells a node to teardown its window and tells its children to.
+
+        Args:
+            node (Node): The current node to teardown.
         """
         if node is None:
             return
@@ -108,8 +141,14 @@ class WindowManager:
         self.teardown(node.second)
 
     def find_node(self, hwnd, node):
-        """Searches through all nodes for the given hwnd.
-        If not found, returns None.
+        """
+        Searches through all nodes for the given hwnd.
+
+        Args:
+            hwnd (int): The window handler to find.
+            node (Node): The current node to search.
+        Returns:
+            (Node): The Node with given hwnd or None if not in tree.
         """
         if node is None:
             return None
@@ -118,7 +157,11 @@ class WindowManager:
         return self.find_node(hwnd, node.first) or self.find_node(hwnd, node.second)
 
     def insert(self, hwnd=None):
-        """Tells desktop to insert given window, or focused window if none.
+        """
+        Tells desktop to insert given window, or focused window if none.
+
+        Kwargs:
+            hwnd (int): The window handler to insert.
         """
         if hwnd is None:
             hwnd = window_api.get_foreground_window()
@@ -130,7 +173,8 @@ class WindowManager:
         self.desktop.insert(hwnd)
 
     def insert_all(self):
-        """Tells desktop to insert all windows.
+        """
+        Tells desktop to insert all windows.
         """
         for window in window_api.get_all_windows():
             self.insert(window)
@@ -141,12 +185,17 @@ class WindowManager:
         # TODO implement desktop.remove
 
     def remove_all(self):
-        """Tells desktop to remove all windows.
+        """
+        Tells desktop to remove all windows.
         """
         # TODO implement desktop.remove_all
 
     def get_focused_node(self):
-        """Returns the node that is currently focused.
+        """
+        Get the node that is currently focused.
+
+        Returns:
+            (Node): Currently focused window's node.
         """
         hwnd = window_api.get_foreground_window()
         return self.find_node(hwnd, self.desktop.root)
