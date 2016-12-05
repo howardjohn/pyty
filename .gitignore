@@ -1,8 +1,8 @@
 __pycache__/*
 *.pyc
 pyhk.py
-src/pyhk.py
 *.sublime*
 *.idea
 *.idea/
 .gitignore
+build/*
