@@ -12,7 +12,7 @@ hook_manager | registers Windows key hooks, which call functions in window_manag
 window_manager | manipulates windows and stores the desktop.
 desktop | maintains the window tree and stores the root node.
 node | stores info including bounding rect, split direction, split ratio, and its window.
-window | stores hwnd reference and api calls to move window
+window | stores hwnd reference and api calls to move window.
 
 Windows are stored in a binary tree. All actual windows are leaf nodes of this tree.
 
@@ -23,15 +23,17 @@ This split is defined by the split (vertical or horizontal) and the ratio of siz
 ![Use Example](example.png)
 
 ### Roadmap
-- Complete all window_manager functions to allow complete control over windows.
+- Complete all window_manager functions to allow complete control over windows. (Removal and complex movement)
+- Implement different insertion methods.
 - Implement settings file.
-- Improve compatability with abnormal window types (especially Metro styles)
-- Implement multiple desktop support
-- Implement alternative insertion methods
-- Override Windows' window manipulation functions
-- Submit to PyPi
+- Improve compatability with abnormal window types. (especially Metro styles)
+- Implement multiple desktop support.
+- Implement alternative insertion methods.
+- Override Windows' window manipulation functions.
+- Submit to PyPi.
 
 ### Requirements
-`namedlist==1.7`
-
-`pywin32==220.1`
+```
+namedlist==1.7
+pywin32==220.1
+```
