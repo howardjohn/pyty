@@ -1,6 +1,14 @@
 """Manages hotkeys."""
 from global_hotkeys import GlobalHotkeys as ghk
 from data import Dir
+import subprocess
+import time
+
+
+def terminal(wm):
+    subprocess.run("C:\\cygwin64\\bin\\mintty.exe")
+    time.sleep(.2)
+    wm.insert()
 
 
 class HookManager():
@@ -37,6 +45,10 @@ class HookManager():
 
         ghk.register(ghk.VK_F, MOD, win_manager.set_insertion)
         ghk.register(ghk.VK_S, MOD, win_manager.change_split)
+
+        ghk.register(ghk.VK_M, ALTMOD, win_manager.bring_to_top)
+
+        ghk.register(ghk.VK_RETURN, ALTMOD, terminal, wm=win_manager)
 
         ghk.register(ghk.VK_E, MOD, win_manager.exit)
 

@@ -50,7 +50,8 @@ class WindowManager:
             delta = -delta
 
         if node.parent is not None:
-            node.parent.ratio = WindowManager.constrain(node.parent.ratio + delta, 0, 1)
+            node.parent.ratio = WindowManager.constrain(
+                node.parent.ratio + delta, 0, 1)
             self.desktop.update_all(self.desktop.root)
 
     def change_focus(self, dir):
@@ -225,6 +226,40 @@ class WindowManager:
         """
         hwnd = window_api.get_foreground_window()
         return self.find_node(hwnd, self.desktop.root)
+
+    def bring_to_top(self):
+        """
+        Brings all windows in the tree to the top.
+        """
+        old_focus = self.get_focused_node()
+        WindowManager.recurse_nodes(self.desktop.root,
+                                    window_api.focus_window, type="hwnd")
+        if old_focus is not None:
+            window_api.focus_window(old_focus.window.hwnd)
+
+    @staticmethod
+    def recurse_nodes(node, func, type="node"):
+        """
+        Helper function to call a function over all nodes in the tree.
+        Can call the function on the node, the window, or the hwnd.
+
+        Args:
+            node (Node): The currently called node.
+            func (Function): The function to call.
+
+        Kwargs:
+            type (String): Node, hwnd, or window. Determines which arg to pass
+                to func.
+        """
+        if node is not None:
+            if type == "node":
+                func(node)
+            elif type == "window" and node.window is not None:
+                func(node.window)
+            elif type == "hwnd" and node.window is not None:
+                func(node.window.hwnd)
+            WindowManager.recurse_nodes(node.first, func, type=type)
+            WindowManager.recurse_nodes(node.second, func, type=type)
 
     @staticmethod
     def constrain(n, low=0, high=1):

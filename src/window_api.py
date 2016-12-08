@@ -222,4 +222,5 @@ def focus_window(hwnd):
         hwnd (int): The window handler.
     """
     wg.ShowWindow(hwnd, wc.SW_SHOW)
+    wg.ShowWindow(hwnd, wc.SW_SHOWNOACTIVATE)
     wg.SetForegroundWindow(hwnd)
