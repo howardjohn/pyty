@@ -5,18 +5,6 @@ import sys
 from data import Dir
 
 
-def constrain(n, low=0, high=1):
-    """
-    Helper function to ensure value is between low and high.
-    If not, limit to low/high.
-    """
-    if n < low:
-        return low
-    elif n > high:
-        return high
-    return n
-
-
 class WindowManager:
     """
     Calls functions to modify windows and stores desktop.
@@ -62,7 +50,7 @@ class WindowManager:
             delta = -delta
 
         if node.parent is not None:
-            node.parent.ratio = constrain(node.parent.ratio + delta, 0, 1)
+            node.parent.ratio = WindowManager.constrain(node.parent.ratio + delta, 0, 1)
             self.desktop.update_all(self.desktop.root)
 
     def change_focus(self, dir):
@@ -128,26 +116,7 @@ class WindowManager:
             while swap.window is None:
                 swap = swap.first
         if swap is not None and swap.window is not None:
-            old_parent = swap.parent
-            old_first = swap.first
-            old_second = swap.second
-            old_is_first = swap.is_first_child()
-
-            swap.parent = node.parent
-            swap.first = node.first
-            swap.second = node.second
-            if node.is_first_child():
-                node.parent.first = swap
-            else:
-                node.parent.second = swap
-
-            node.parent = old_parent
-            node.first = old_first
-            node.second = old_second
-            if old_is_first:
-                old_parent.first = node
-            else:
-                old_parent.second = node
+            WindowManager.swap_node(swap, node)
             self.desktop.update_all(self.desktop.root)
 
     def change_split(self):
@@ -256,3 +225,45 @@ class WindowManager:
         """
         hwnd = window_api.get_foreground_window()
         return self.find_node(hwnd, self.desktop.root)
+
+    @staticmethod
+    def constrain(n, low=0, high=1):
+        """
+        Helper function to ensure value is between low and high.
+        If not, limit to low/high.
+        """
+        if n < low:
+            return low
+        elif n > high:
+            return high
+        return n
+
+    @staticmethod
+    def swap_node(a, b):
+        """
+        Swaps the location of node A and node B in the tree.
+
+        Args:
+            a (Node): Node to swap location with B
+            b (Node): Node to swap location with A
+        """
+        temp_parent = a.parent
+        temp_first = a.first
+        temp_second = a.second
+        temp_is_first = a.is_first_child()
+
+        a.parent = b.parent
+        a.first = b.first
+        a.second = b.second
+        if b.is_first_child():
+            b.parent.first = a
+        else:
+            b.parent.second = a
+
+        b.parent = temp_parent
+        b.first = temp_first
+        b.second = temp_second
+        if temp_is_first:
+            temp_parent.first = b
+        else:
+            temp_parent.second = b
