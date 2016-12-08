@@ -10,7 +10,7 @@ class Desktop:
 
     Attributes:
         roots (Node): Root nodes holding all nodes.
-        focus (Node): Insertion point for new nodes.
+        insertion (Node): Insertion point for new nodes.
         size (Size(w, h)): The desktop's size.
     """
 
@@ -23,7 +23,7 @@ class Desktop:
             height (int): The height of the desktop.
         """
         self.root = None
-        self.focus = None
+        self.insertion = None
         self.size = Size(width, height)
 
     def __str__(self):
@@ -64,28 +64,28 @@ class Desktop:
         """
         leaf_node = Node(Window(hwnd))
         internal_node = Node()
-        if self.focus is None:
-            self.focus = self.root
+        if self.insertion is None:
+            self.insertion = self.root
 
         # first window
         if self.root is None:
-            assert(self.root == self.focus)
+            assert(self.root == self.insertion)
             self.root = leaf_node
             self.root.rect = Rect(0, 0, self.size.w, self.size.h)
         else:
             internal_node.first = leaf_node
-            internal_node.second = self.focus
+            internal_node.second = self.insertion
             internal_node.rect = Rect(0, 0, self.size.w, self.size.h)
-            if self.focus.parent is None:
+            if self.insertion.parent is None:
                 self.root = internal_node
             else:
-                internal_node.parent = self.focus.parent
-                if self.focus.is_first_child():
-                    self.focus.parent.first = internal_node
+                internal_node.parent = self.insertion.parent
+                if self.insertion.is_first_child():
+                    self.insertion.parent.first = internal_node
                 else:
-                    self.focus.parent.second = internal_node
+                    self.insertion.parent.second = internal_node
             leaf_node.parent = internal_node
-            self.focus.parent = internal_node
+            self.insertion.parent = internal_node
 
         self.update_all(self.root)
 

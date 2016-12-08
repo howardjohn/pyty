@@ -93,7 +93,16 @@ class WindowManager:
         if focus is not None and focus.window is not None:
             window_api.focus_window(focus.window.hwnd)
 
-    def swap_window(self, dir):
+    def set_insertion(self):
+        """
+        Sets the insertion point to the currently focused window.
+        """
+        node = self.get_focused_node()
+
+        if node is not None:
+            self.desktop.insertion = node
+
+    def move_window(self, dir):
         """
         Swaps currently focused window with another window based on relation in tree.
 
@@ -131,7 +140,7 @@ class WindowManager:
                 node.parent.first = swap
             else:
                 node.parent.second = swap
-                
+
             node.parent = old_parent
             node.first = old_first
             node.second = old_second
@@ -141,7 +150,7 @@ class WindowManager:
                 old_parent.second = node
             self.desktop.update_all(self.desktop.root)
 
-    def swap_split(self):
+    def change_split(self):
         """
         Swap split type on focused window.
         """

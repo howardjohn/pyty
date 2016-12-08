@@ -26,8 +26,8 @@ class HookManager():
         # TODO error when using VK_UP/DOWN? why?
         ghk.register(ghk.VK_PRIOR, MOD, win_manager.change_focus, dir=Dir.up)
         ghk.register(ghk.VK_NEXT, MOD, win_manager.change_focus, dir=Dir.down)
-        ghk.register(ghk.VK_PRIOR, ALTMOD, win_manager.swap_window, dir=Dir.up)
-        ghk.register(ghk.VK_NEXT, ALTMOD, win_manager.swap_window, dir=Dir.down)
+        ghk.register(ghk.VK_PRIOR, ALTMOD, win_manager.move_window, dir=Dir.up)
+        ghk.register(ghk.VK_NEXT, ALTMOD, win_manager.move_window, dir=Dir.down)
 
         ghk.register(ghk.VK_G, MOD, win_manager.change_gaps, delta=2)
         ghk.register(ghk.VK_G, ALTMOD, win_manager.change_gaps, delta=-2)
@@ -35,7 +35,9 @@ class HookManager():
         ghk.register(ghk.VK_R, MOD, win_manager.change_ratio, delta=.1)
         ghk.register(ghk.VK_R, ALTMOD, win_manager.change_ratio, delta=-.1)
 
-        ghk.register(ghk.VK_S, MOD, win_manager.swap_split)
+        ghk.register(ghk.VK_F, MOD, win_manager.set_insertion)
+        ghk.register(ghk.VK_S, MOD, win_manager.change_split)
+
         ghk.register(ghk.VK_E, MOD, win_manager.exit)
 
         ghk.register(ghk.VK_OEM_PLUS, MOD, win_manager.insert)
