@@ -40,14 +40,14 @@ class Node:
         Updates a window by setting new split and rect.
         Only if the rect has changed will the the window move.
         """
-        if self.window is not None:
+        if self.is_leaf_node():
             old_rect = self.window.get_rect()
         else:
             old_rect = self.rect
 
         self.set_split()
         self.set_rect()
-        if self.rect != old_rect and self.window is not None:
+        if self.rect != old_rect and self.is_leaf_node():
             gap = 6  # TODO: gap should be taken from window_manager
             self.window.move(self.rect, gap)
 
@@ -100,13 +100,10 @@ class Node:
         return self.parent is not None and self.parent.second == self
 
     def is_leaf_node(self):
-        if self.first is None:
-            assert(self.second is None)
-            assert(self.window is not None)
         return self.window is not None
 
     def get_sibling(self):
-        if self.parent is None: 
+        if self.parent is None:
             return self
         if self.is_first_child():
             return self.parent.second

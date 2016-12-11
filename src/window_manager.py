@@ -5,6 +5,7 @@ from data import Dir
 
 
 class WindowManager:
+
     def __init__(self, gap=6):
         width, height = window_api.get_screen_resolution()
 
@@ -13,7 +14,7 @@ class WindowManager:
 
     def change_gaps(self, delta):
         self.gap = max(self.gap + delta, 0)
-        self.desktop.update_all(self.desktop.root)
+        self.update_windows()
 
     def change_ratio(self, delta):
         node = self.get_focused_node()
@@ -25,7 +26,7 @@ class WindowManager:
         if node.parent is not None:
             node.parent.ratio = WindowManager.constrain(
                 node.parent.ratio + delta, 0, 1)
-            self.desktop.update_all(self.desktop.root)
+            self.update_windows()
 
     def set_insertion(self):
         node = self.get_focused_node()
@@ -46,7 +47,7 @@ class WindowManager:
 
         if node is not None:
             WindowManager.swap_node(swap, node)
-            self.desktop.update_all(self.desktop.root)
+            self.update_windows()
 
     def change_split(self):
         node = self.get_focused_node()
@@ -54,7 +55,7 @@ class WindowManager:
         if node is not None:
             self.swap_split_recurse(node.parent)
 
-        self.desktop.update_all(self.desktop.root)
+        self.update_windows()
 
     def swap_split_recurse(self, node):
         if node is not None:
@@ -64,7 +65,6 @@ class WindowManager:
 
     def exit(self):
         self.teardown(self.desktop.root)
-
         sys.exit(0)
 
     def teardown(self, node):
@@ -113,9 +113,13 @@ class WindowManager:
     def bring_to_top(self):
         old_focus = self.get_focused_node()
         WindowManager.recurse_nodes(self.desktop.root,
-                                    window_api.focus_window, type="hwnd")
+                                    window_api.focus_window,
+                                    type="hwnd")
         if old_focus is not None:
             window_api.focus_window(old_focus.window.hwnd)
+
+    def update_windows(self):
+        self.desktop.update_all(self.desktop.root)
 
     @staticmethod
     def recurse_nodes(node, func, type="node"):
