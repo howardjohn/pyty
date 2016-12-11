@@ -13,6 +13,7 @@ class WindowManager:
         self.gap = gap
 
     def change_gaps(self, delta):
+        # Can't have negative gap
         self.gap = max(self.gap + delta, 0)
         self.update_windows()
 
@@ -24,8 +25,7 @@ class WindowManager:
             delta = -delta
 
         if node.parent is not None:
-            node.parent.ratio = WindowManager.constrain(
-                node.parent.ratio + delta, 0, 1)
+            node.parent.ratio = WindowManager.clip(node.parent.ratio + delta)
             self.update_windows()
 
     def set_insertion(self):
@@ -134,7 +134,7 @@ class WindowManager:
             WindowManager.recurse_nodes(node.second, func, type=type)
 
     @staticmethod
-    def constrain(n, low=0, high=1):
+    def clip(n, low=0, high=1):
         if n < low:
             return low
         elif n > high:
