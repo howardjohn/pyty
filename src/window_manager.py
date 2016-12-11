@@ -143,27 +143,8 @@ class WindowManager:
 
     @staticmethod
     def swap_node(a, b):
-        temp_parent = a.parent
-        temp_first = a.first
-        temp_second = a.second
-        temp_is_first = a.is_first_child()
-
-        a.parent = b.parent
-        a.first = b.first
-        a.second = b.second
-        if b.is_first_child():
-            b.parent.first = a
-        else:
-            b.parent.second = a
-
-        b.parent = temp_parent
-        b.first = temp_first
-        b.second = temp_second
-        if temp_is_first:
-            temp_parent.first = b
-        else:
-            temp_parent.second = b
-
+        a.window, b.window = b.window, a.window
+ 
     @staticmethod
     def get_next_node(node, depth):
         # If parent is none then it is the only window.
