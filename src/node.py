@@ -94,19 +94,21 @@ class Node:
             return '[Internal]'
 
     def is_first_child(self):
-        """
-        Checks if the node is the first child of its parent.
-
-        Returns:
-            (bool): True if is first child, else False.
-        """
         return self.parent is not None and self.parent.first == self
 
     def is_second_child(self):
-        """
-        Checks if the node is the second child of its parent.
-
-        Returns:
-            (bool): True if is second child, else False.
-        """
         return self.parent is not None and self.parent.second == self
+
+    def is_leaf_node(self):
+        if self.first is None:
+            assert(self.second is None)
+            assert(self.window is not None)
+        return self.window is not None
+
+    def get_sibling(self):
+        if self.parent is None: 
+            return self
+        if self.is_first_child():
+            return self.parent.second
+        else:
+            return self.parent.first

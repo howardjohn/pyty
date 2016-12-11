@@ -44,7 +44,7 @@ class Desktop:
                 if not first:
                     output += " | "
                 first = False
-                output += str(node if node else "NA")
+                output += str(node if node else "[   NA  ]")
                 if node:
                     next_nodes.append(node.first)
                     next_nodes.append(node.second)
