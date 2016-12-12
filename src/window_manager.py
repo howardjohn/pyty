@@ -151,6 +151,13 @@ class WindowManager:
         print(self.desktop)
         print("Ins:", self.desktop.insertion)
 
+    def close_window(self):
+        focus = self.get_focused_node()
+
+        if focus is not None:
+            self.remove(node=focus)
+            window_api.close_window(focus.window.hwnd)
+
     @staticmethod
     def recurse_nodes(node, func, type="node"):
         if node is not None:

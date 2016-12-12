@@ -224,3 +224,12 @@ def focus_window(hwnd):
     wg.ShowWindow(hwnd, wc.SW_SHOW)
     wg.ShowWindow(hwnd, wc.SW_SHOWNOACTIVATE)
     wg.SetForegroundWindow(hwnd)
+
+def close_window(hwnd):
+    """
+    Sends a message to close the given window.
+
+    Args:
+        hwnd (int): The window handler.
+    """
+    wg.PostMessage(hwnd, wc.WM_CLOSE, 0, 0)
