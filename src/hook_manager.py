@@ -45,6 +45,7 @@ class HookManager():
 
         ghk.register(ghk.VK_F, MOD, win_manager.set_insertion)
         ghk.register(ghk.VK_S, MOD, win_manager.change_split)
+        ghk.register(ghk.VK_D, MOD, win_manager.debug)
 
         ghk.register(ghk.VK_M, ALTMOD, win_manager.bring_to_top)
 

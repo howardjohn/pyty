@@ -45,7 +45,7 @@ class WindowManager:
         node = self.get_focused_node()
         swap = WindowManager.get_next_node(node, depth)
 
-        if node is not None:
+        if node is not None and swap is not None:
             WindowManager.swap_node(swap, node)
             self.update_windows()
 
@@ -98,13 +98,39 @@ class WindowManager:
         for window in window_api.get_all_windows():
             self.insert(window)
 
-    def remove(self):
-        pass
-        # TODO implement desktop.remove
+    def remove(self, node=None):
+        if node is None:
+            node = self.get_focused_node()
+
+        # No need to remove
+        if node is None or not node.is_leaf_node():
+            return
+
+        if node.parent is None: # Only node
+            self.desktop.root = None
+            self.desktop.insertion = None
+        else:
+            old = node.parent
+            new = node.get_sibling()
+            new.parent = old.parent
+            if old.parent is not None:
+                if old.is_first_child():
+                    old.parent.first = new
+                else:
+                    old.parent.second = new
+            else:
+                self.desktop.root = new
+            new.rect = old.rect
+            if self.desktop.insertion == node:
+                self.desktop.insertion = WindowManager.find_first_leaf(new)
+        node.window.teardown_window()
+        self.update_windows()
+        self.bring_to_top()
 
     def remove_all(self):
-        pass
-        # TODO implement desktop.remove_all
+        WindowManager.recurse_nodes(self.desktop.root,
+                                    self.remove,
+                                    type="node")
 
     def get_focused_node(self):
         hwnd = window_api.get_foreground_window()
@@ -120,6 +146,10 @@ class WindowManager:
 
     def update_windows(self):
         self.desktop.update_all(self.desktop.root)
+
+    def debug(self):
+        print(self.desktop)
+        print("Ins:", self.desktop.insertion)
 
     @staticmethod
     def recurse_nodes(node, func, type="node"):
@@ -147,6 +177,10 @@ class WindowManager:
  
     @staticmethod
     def get_next_node(node, depth):
+        """
+        Moves up `depth` parents, then finds first leaf node under that depth.
+        depth=0 would be sibling, depth=1 is parent's sibling's first leaf node.
+        """
         # If parent is none then it is the only window.
         if node is None or node.parent is None:
             return None
@@ -158,6 +192,14 @@ class WindowManager:
             return next_node
 
     @staticmethod
+    def traverse_up(node, depth):
+        if depth <= 0:
+            return node.get_sibling()
+        if node.parent is None:
+            return node
+        return WindowManager.traverse_up(node.parent, depth - 1)
+
+    @staticmethod
     def find_first_leaf(node):
         queue = [node]
         while queue:
@@ -166,11 +208,3 @@ class WindowManager:
                 return current
             queue.append(current.first)
             queue.append(current.second)
-
-    @staticmethod
-    def traverse_up(node, depth):
-        if depth <= 0:
-            return node.get_sibling()
-        if node.parent is None:
-            return node
-        return WindowManager.traverse_up(node.parent, depth - 1)

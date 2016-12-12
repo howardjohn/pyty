@@ -69,9 +69,9 @@ class Desktop:
 
         # first window
         if self.root is None:
-            assert(self.root == self.insertion)
             self.root = leaf_node
             self.root.rect = Rect(0, 0, self.size.w, self.size.h)
+            self.insertion = self.root
         else:
             internal_node.first = leaf_node
             internal_node.second = self.insertion
