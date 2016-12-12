@@ -28,7 +28,6 @@ This split is defined by the split (vertical or horizontal) and the ratio of siz
 - Implement settings file.
 - Improve compatability with abnormal window types. (especially Metro styles)
 - Implement multiple desktop support.
-- Implement alternative insertion methods.
 - Override Windows' window manipulation functions.
 - Submit to PyPi.
 
