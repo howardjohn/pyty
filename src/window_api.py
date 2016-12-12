@@ -81,8 +81,7 @@ def is_real_window(hwnd):
     pwi = WINDOWINFO()
     ctypes.windll.user32.GetWindowInfo(hwnd, ctypes.byref(pwi))
 
-    # Backround AND FOREGROUND metro style apps.
-    # TODO Should be fixed to only remove invisible apps, not all metro
+    # Backround metro style apps.
     if pwi.dwStyle == 2496593920:
         return False
 

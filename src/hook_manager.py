@@ -31,7 +31,7 @@ class HookManager():
         MOD = ghk.MOD_WIN | ghk.MOD_SHIFT
         ALTMOD = MOD | ghk.MOD_ALT
 
-        # TODO error when using VK_UP/DOWN? why?
+        # TODO error when using VK_UP/DOWN?
         ghk.register(ghk.VK_PRIOR, MOD, win_manager.change_focus, depth=1)
         ghk.register(ghk.VK_NEXT, MOD, win_manager.change_focus, depth=0)
         ghk.register(ghk.VK_PRIOR, ALTMOD, win_manager.swap_window, depth=1)
